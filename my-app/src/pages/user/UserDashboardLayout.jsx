@@ -86,7 +86,7 @@ const UserDashboardLayout = () => {
       {/* Sidebar */}
       <aside
         className={`
-          bg-violet-700 text-white p-5 flex flex-col space-y-6
+          bg-slate-900 text-white p-5 flex flex-col space-y-6
           fixed top-0 left-0 h-full w-64 z-40 mt-3
           transform ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} 
           transition-transform duration-300

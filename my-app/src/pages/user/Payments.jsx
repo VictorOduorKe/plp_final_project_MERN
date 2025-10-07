@@ -1,5 +1,8 @@
 import { useState } from "react";
 import axios from "axios"
+import {toast} from "react-toastify"
+
+
 const Payment = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -35,7 +38,7 @@ const res = await axios.post(
      window.location.href = authorization_url;
    } catch (error) {
     console.error("Payment error:", error.response?.data || error.message);
-    alert(
+    toast.error(
       error.response?.data?.message ||
         "Failed to start payment. Please try again."
     );

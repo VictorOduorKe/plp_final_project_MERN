@@ -17,7 +17,7 @@ router.post("/", async (req, res) => {
     // ✅ Block duplicate pending payments
     const existingPending = await Payment.findOne({ user_id, status: "pending" });
     if (existingPending) {
-      return res.status(400).json({ message: "User already has a pending payment" });
+      return res.status(400).json({ message: "User already has a pending payment kindly contact for support" });
     }
 
     // ✅ Define amount server-side based on package

@@ -21,8 +21,7 @@ const UserDashboardLayout = () => {
     const fetchStatus = async () => {
       try {
         const result = await paymentStatus(user_id);
-        setStatus(result); // ✅ store actual plan info
-        console.log("Payment status:", result);
+        setStatus(result); 
       } catch (err) {
         console.error("Failed to fetch payment status:", err);
       }
@@ -48,7 +47,6 @@ const UserDashboardLayout = () => {
       toast.success("Logged out successfully!");
       navigate("/login");
     } catch (error) {
-      console.error("Logout failed:", error);
       toast.error("Failed to logout. Try again.");
     }
   };
@@ -90,7 +88,7 @@ const UserDashboardLayout = () => {
           fixed top-0 left-0 h-full w-64 z-40 mt-3
           transform ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} 
           transition-transform duration-300
-          md:relative md:translate-x-0 md:flex-shrink-0
+          md:relative md:translate-x-0 md:flex-shrink-0 min-h-screen
         `}
       >
         <h2 className="text-2xl font-bold text-center mb-8 md:hidden">
@@ -111,24 +109,26 @@ const UserDashboardLayout = () => {
             ➕ Add Subject
           </NavLink>
 
-          <NavLink to="/user/study-plans" onClick={handleLinkClick} className={({ isActive }) =>
+          {/*<NavLink to="/user/study-plans" onClick={handleLinkClick} className={({ isActive }) =>
               `px-3 py-2 rounded-md hover:bg-violet-600 transition ${isActive ? "bg-violet-600" : ""}`
             }>
             📊 Study Plans
-          </NavLink>
-
-          <NavLink to="/user/quizzes" onClick={handleLinkClick} className={({ isActive }) =>
+          </NavLink>*/}
+          {/*<NavLink to='/user/todays-study-plan'>
+            Todays Study Plan
+          </NavLink>*/}
+          <NavLink to="/user/exams" onClick={handleLinkClick} className={({ isActive }) =>
               `px-3 py-2 rounded-md hover:bg-violet-600 transition ${isActive ? "bg-violet-600" : ""}`
             }>
-            🧠 Quizzes
+            🧠 Exam practice
           </NavLink>
 
-          <NavLink to="/user/notes" onClick={handleLinkClick} className={({ isActive }) =>
+         {/* <NavLink to="/user/notes" onClick={handleLinkClick} className={({ isActive }) =>
               `px-3 py-2 rounded-md hover:bg-violet-600 transition ${isActive ? "bg-violet-600" : ""}`
             }>
             📚 Notes
-          </NavLink>
-
+          </NavLink>*/}
+{/*}
       {status ? (
   status.package !== "free" && !status.expired ? (
     <p className="text-sm text-slate-200 font-medium">
@@ -154,7 +154,7 @@ const UserDashboardLayout = () => {
 ) : (
   <p className="text-slate-300 text-sm">Loading plan...</p>
 )}
-
+*/}
         </nav>
 
         <div className="mt-auto text-center md:hidden">

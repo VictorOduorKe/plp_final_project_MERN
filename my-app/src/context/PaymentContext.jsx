@@ -7,19 +7,15 @@ export const paymentStatus = async (user_id) => {
       `${import.meta.env.VITE_API_URL}/payment/status/${user_id}`
     );
 
-    console.log("✅ Payment Status:", res.data);
+        toast.success(`you are on ${res.data.package} package`)
 
     // ✅ Use res.status instead of res.ok
-    if (res.status !== 200 || res.data.package === "free") {
+   /* if (res.status !== 200 || res.data.package === "free") {
       toast.error("No active plan found");
-    }
+    }*/
 
     return res.data; // e.g. { package: "free", message: "No active plan found" }
   } catch (error) {
-    console.error(
-      "❌ no payment plan found:",
-      error.response?.data || error.message
-    );
     toast.error("Unable to fetch payment status");
     return { package: "free", message: "Unable to fetch status" }; // fallback
   }

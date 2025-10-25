@@ -1,6 +1,5 @@
 import { useState, useContext } from "react";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast} from "react-toastify";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { ClipLoader } from "react-spinners"; // ✅ import spinner
@@ -45,7 +44,6 @@ const Login = () => {
 
   return (
     <section className="min-h-screen flex items-center justify-center bg-slate-800 px-4">
-      <ToastContainer position="top-right" autoClose={3000} />
       <div className="w-full max-w-md bg-slate-900 rounded-2xl shadow-2xl p-8 border border-slate-700">
         <h2 className="text-3xl font-bold text-center text-violet-400 mb-4">
           AI Study Planner

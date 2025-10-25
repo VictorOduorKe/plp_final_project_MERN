@@ -1,7 +1,9 @@
 // AddSubject.jsx
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { generatePlan } from "../../context/GeneratePlan";
 
 const CLASS_LEVELS = {
   Primary: ["Grade 1", "Grade 2", "Grade 3", "Grade 4", "Grade 5", "Grade 6"],
@@ -16,10 +18,12 @@ const AddSubject = () => {
   const [educationLevel, setEducationLevel] = useState("");
   const [classLevel, setClassLevel] = useState("");
   const [subjects, setSubjects] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const storedUser = localStorage.getItem("user");
   const user_id = storedUser ? JSON.parse(storedUser)?.id : null;
   const token = localStorage.getItem("token");
+
   useEffect(() => {
     if (!user_id) return;
 
@@ -27,13 +31,30 @@ const AddSubject = () => {
       try {
         const res = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/subjects?user_id=${user_id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
-        setSubjects(res.data);
+
+        // 🔍 Mark whether each subject already has a plan
+        const subjectsWithPlanStatus = await Promise.all(
+          res.data.map(async (subject) => {
+            try {
+              const planCheck = await axios.get(
+                `${import.meta.env.VITE_API_URL}/plan?user_id=${user_id}&subject_id=${subject._id}`
+              );
+              return {
+                ...subject,
+                hasPlan: planCheck.data ? true : false,
+              };
+            } catch (error) {
+              return {
+                ...subject,
+                hasPlan: false,
+              };
+            }
+          })
+        );
+
+        setSubjects(subjectsWithPlanStatus);
       } catch (err) {
         console.error("Error loading subjects:", err);
       }
@@ -42,48 +63,80 @@ const AddSubject = () => {
     fetchSubjects();
   }, [user_id]);
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
+  const navigate = useNavigate();
 
-  if (!subject || !educationLevel || !classLevel) {
-    toast.error("All fields are required");
-    return;
-  }
-  if (!user_id) {
-    toast.error("You must be logged in to add a subject");
-    return;
-  }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const newSubject = {
-    subject_name: subject,
-    education_level: educationLevel,
-    class_level: classLevel,
-    user_id,
+    if (!subject || !educationLevel || !classLevel) {
+      toast.error("All fields are required");
+      return;
+    }
+    if (!user_id) {
+      toast.error("You must be logged in to add a subject");
+      return;
+    }
+
+    const newSubject = {
+      subject_name: subject,
+      education_level: educationLevel,
+      class_level: classLevel,
+      user_id,
+    };
+
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/subject`,
+        newSubject,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true,
+        }
+      );
+
+      const createdSubject = res.data;
+      
+      // Add the new subject without a plan initially
+      setSubjects([...subjects, { ...createdSubject, hasPlan: false }]);
+      setSubject("");
+      setEducationLevel("");
+      setClassLevel("");
+      toast.success("Subject added successfully!");
+
+      // ❌ REMOVED: Automatic plan generation
+      // Now users will need to click the "Generate Study Plan" button manually
+
+    } catch (err) {
+      console.error("Error adding subject:", err);
+      toast.error(err.response?.data?.message || "Failed to add subject");
+    }
   };
 
-  try {
-    const res = await axios.post(
-      `${import.meta.env.VITE_API_URL}/api/subject`,
-      newSubject, // ✅ data goes here
-      {
-        headers: {
-          Authorization: `Bearer ${token}`, // ✅ token goes in headers
-        },
-        withCredentials: true,
+  const handleGeneratePlan = async (subjectId) => {
+    if (!user_id) {
+      toast.error("You must be logged in to generate a plan");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const plan = await generatePlan(user_id, subjectId);
+      if (plan) {
+        toast.success("📚 Study plan generated successfully!");
+        // Update the subject's plan status
+        setSubjects(subjects.map(subj =>
+          subj._id === subjectId ? { ...subj, hasPlan: true } : subj
+        ));
+      } else {
+        toast.error("Failed to generate study plan");
       }
-    );
-
-    setSubjects([...subjects, res.data]);
-    setSubject("");
-    setEducationLevel("");
-    setClassLevel("");
-    toast.success("Subject added successfully!");
-  } catch (err) {
-    console.error("Error adding subject:", err);
-    toast.error(err.response?.data?.message || "Failed to add subject");
-  }
-};
-
+    } catch (error) {
+      console.error("Error generating plan:", error);
+      toast.error("Failed to generate study plan");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleDelete = async (id) => {
     try {
@@ -180,6 +233,7 @@ const AddSubject = () => {
                     {s.education_level} - {s.class_level}
                   </p>
                 </div>
+
                 <div className="flex gap-3">
                   <button
                     onClick={() => handleDelete(s._id)}
@@ -187,11 +241,32 @@ const AddSubject = () => {
                   >
                     Delete
                   </button>
-                  <button
-                    className="px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-lg transition"
-                  >
-                    Generate Study Plan
-                  </button>
+
+                  {/* ✅ Conditional Buttons */}
+                  {s.hasPlan ? (
+                    <>
+                      <button
+                        onClick={() => navigate(`/user/plan/${s._id}`)}
+                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition"
+                      >
+                        📘 View Plan
+                      </button>
+                      <button 
+                        onClick={() => navigate(`/user/todays-study-plan/${s._id}`)}
+                        className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition"
+                      >
+                        View Activity
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={() => handleGeneratePlan(s._id)}
+                      disabled={loading}
+                      className="px-4 py-2 bg-violet-600 hover:bg-violet-700 disabled:bg-violet-400 text-white rounded-lg transition"
+                    >
+                      {loading ? "Generating..." : "⚙️ Generate Study Plan"}
+                    </button>
+                  )}
                 </div>
               </li>
             ))}

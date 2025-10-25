@@ -20,10 +20,12 @@ import ResetPassword from "./pages/ResetPassword";
 import UserDashboardLayout from "./pages/user/UserDashboardLayout";
 import AddSubject from "./pages/user/AddSubject";
 import StudyPlans from "./pages/user/StudyPlans";
-import Quizzes from "./pages/user/Quizzes";
 import Notes from "./pages/user/Notes";
 import Payments from "./pages/user/Payments";
 import PaymentSuccess from "./pages/user/PaymentSuccess";
+import TodayStudyPath from "./pages/user/TodayStudyPath";
+import ViewPlan from "./pages/user/ViewPlan";
+import Exams from "./pages/user/Exams";
 
 // 🛠️ Admin Dashboard Pages
 import AdminLayout from "./pages/admin/AdminLayout";
@@ -60,14 +62,13 @@ import PaymentAnalytics from "./pages/admin/PaymentAnalytics";
               {/* ✅ Named routes */}
               <Route path="add-subject" element={<AddSubject />} />
               <Route path="study-plans" element={<StudyPlans />} />
-              <Route path="quizzes" element={<Quizzes />} />
+              <Route path="exams" element={<Exams />} />
               <Route path="notes" element={<Notes />} />
               <Route path="payments" element={<Payments />} />
+              <Route path="todays-study-plan/:subjectId" element={<TodayStudyPath />} />
               <Route path="payment-success" element={<PaymentSuccess/>}/>
-
+              <Route path="/user/plan/:subjectId" element={<ViewPlan />} />
             </Route>
-
-
             {/* Admin routes */}
             <Route path="/admin" element={
               <ProtectedAdminRoute>

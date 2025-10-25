@@ -9,6 +9,9 @@ const logoutRoute=require("./routes/authLogout")
 const adminRoutes=require('./routes/adminRoutes')
 const contactMessage=require("./routes/contactMessage")
 const paymentRoute=require('./routes/paymentRoute')
+const planRoute = require('./routes/planRoute')
+const answerRoutes = require("./routes/answerRoute");
+
 require("dotenv").config();
 
 const app = express();
@@ -35,6 +38,8 @@ app.use("/api", subjectRoutes);
 app.use("/api", adminRoutes);
 app.use("/api", contactMessage);
 app.use('/payment',paymentRoute)
+app.use('/plan',planRoute)
+app.use("/answers", answerRoutes);
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);

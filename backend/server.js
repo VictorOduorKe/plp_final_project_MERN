@@ -48,7 +48,7 @@ dbConnection();
 app.get("/", (req, res) => {
   res.send("Hello Express.js 🚀");
 });
-
+// Routes
 app.use("/auth", otp);
 app.use("/auth", authRoute);
 app.use("/auth", authLogin);

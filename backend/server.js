@@ -20,30 +20,30 @@ const PORT = 3000;
 
 app.use(cookieParser());
 
-// ✅ CORS configuration for production and development
+// ✅ CORS configuration
 app.use(cors({
-  origin: function(origin, callback) {
-    // Allow requests from your frontend domains
-    const allowedOrigins = [
-      process.env.ORIGIN_URI,  // development
-      'https://ai-study-planner-buddy.netlify.app/register', // add your frontend production domain
-      'http://localhost:5173'  // local development
-    ];
-    
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: 'https://ai-study-planner-buddy.netlify.app',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+  exposedHeaders: ['Set-Cookie']
 }));
 
 
+// Handle OPTIONS preflight requests
+app.options('*', cors());
+
 app.use(express.json());
 dbConnection();
+
+// Add security headers
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Origin', 'https://ai-study-planner-buddy.netlify.app');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Cookie');
+  next();
+});
 
 app.get("/", (req, res) => {
   res.send("Hello Express.js 🚀");

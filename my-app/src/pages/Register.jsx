@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios"; 
 import { toast } from "react-toastify";
 import { ClipLoader } from "react-spinners"; // ✅ spinner
-
+import { useNavigate } from "react-router-dom";
 const Register = () => {
   const [formData, setFormData] = useState({
     email: "",
@@ -12,6 +12,7 @@ const Register = () => {
     phone_number: "",
     otp: "",
   });
+  const navigate=useNavigate();
   const [otpSent, setOtpSent] = useState(false);
   const [loading, setLoading] = useState(false); // ✅ loading state
 
@@ -66,6 +67,7 @@ const Register = () => {
         withCredentials: true,
       });
       toast.success(res.data.message || "Registration successful!");
+      navigate("/login");
     } catch (err) {
       console.error("❌ Registration failed:", err.response || err);
       const serverMsg = err.response?.data?.error || err.response?.data?.message;
@@ -86,7 +88,7 @@ const Register = () => {
         </p>
 
         {/* Email + Send OTP */}
-        {!otpSent && (
+       {/*} {!otpSent && (
           <div className="flex gap-2 mb-4">
             <input
               type="email"
@@ -105,10 +107,10 @@ const Register = () => {
               {loading ? <ClipLoader color="#1c1917" size={20} /> : "Send OTP"}
             </button>
           </div>
-        )}
+        )}*/}
 
         {/* Form (shows after OTP sent) */}
-        {otpSent && (
+        {!otpSent && (
           <form className="space-y-4 md:space-y-5" onSubmit={handleSubmit}>
             {/* Full Name */}
             <input
@@ -119,6 +121,14 @@ const Register = () => {
               onChange={handleChange}
               className="w-full px-4 py-2 md:py-3 rounded-lg border border-gray-600 bg-slate-800 text-violet-400 focus:ring-2 focus:ring-violet-400 focus:outline-none"
               required
+            />
+            <input
+              type="email"
+              name="email"
+              placeholder="Enter your email"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full px-4 py-2 md:py-3 rounded-lg border border-gray-600 bg-slate-800 text-violet-400 focus:ring-2 focus:ring-violet-400 focus:outline-none"
             />
             <input
               type="tel"
@@ -147,7 +157,7 @@ const Register = () => {
               className="w-full px-4 py-2 md:py-3 rounded-lg border border-gray-600 bg-slate-800 text-violet-400 focus:ring-2 focus:ring-violet-400 focus:outline-none"
               required
             />
-            <input
+           {/*} <input
               type="text"
               name="otp"
               placeholder="Enter OTP"
@@ -155,14 +165,14 @@ const Register = () => {
               onChange={handleChange}
               className="w-full px-4 py-2 md:py-3 rounded-lg border border-gray-600 bg-slate-800 text-violet-400 focus:ring-2 focus:ring-violet-400 focus:outline-none"
               required
-            />
+            />*/}
 
             {/* Submit button */}
             <button
               type="submit"
-              disabled={!formData.otp || loading}
+              disabled={!formData || loading}
               className={`w-full py-2 md:py-3 rounded-lg bg-violet-400 text-slate-900 font-semibold transition duration-300 shadow-md flex items-center justify-center ${
-                !formData.otp
+                !formData
                   ? "opacity-50 cursor-not-allowed"
                   : "hover:bg-violet-500"
               }`}

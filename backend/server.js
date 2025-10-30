@@ -24,7 +24,7 @@ app.set('trust proxy', 1);
 app.use(cookieParser());
 
 // ✅ CORS configuration
-const corsOptions = {
+/*const corsOptions = {
   origin: process.env.NODE_ENV === 'production' 
     ? 'https://ai-study-planner-buddy.netlify.app'
     : 'http://localhost:5173',
@@ -32,8 +32,29 @@ const corsOptions = {
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'X-Requested-With'],
   exposedHeaders: ['Set-Cookie']
-};
+};*/
+const allowedOrigins = [
+  `${process.env.ORIGIN_URI}`,
+  'http://localhost:5173',
+  'http://127.0.0.1:5173'
+];
 
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow no-origin requests (e.g. Postman / server-side)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('❌ CORS blocked: ' + origin));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'X-Requested-With'],
+  exposedHeaders: ['Set-Cookie']
+};
 // Apply CORS configuration
 app.use(cors(corsOptions));
 
@@ -59,5 +80,8 @@ app.use("/answers", answerRoutes);
 
 // Start server
 app.listen(PORT, () => {
+  if(process.env.NODE_ENV==='production'){
+    app.set('trust proxy', 1); // trust first proxy
+  }
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });

@@ -5,11 +5,10 @@ exports.generateToken = (res,payload, expiresIn = "1h") => {
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn });
    res.cookie("token", token, {
     httpOnly: true,
-    secure: true, // Always use secure in production
-    sameSite: 'none', // Required for cross-site cookies
-    maxAge: expiresIn === "1h" ? 3600000 : expiresIn === "12h" ? 43200000 : 86400000, // in milliseconds
-    path: '/', // Ensure cookie is available across all paths
-    domain: process.env.NODE_ENV === "production" ? '.onrender.com' : undefined // Adjust domain for production
+    secure: true,
+    sameSite: 'none',
+    maxAge: expiresIn === "1h" ? 3600000 : expiresIn === "12h" ? 43200000 : 86400000,
+    path: '/',
 });
 
     return token;

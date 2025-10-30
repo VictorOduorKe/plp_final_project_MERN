@@ -26,7 +26,7 @@ app.use(cors({
     // Allow requests from your frontend domains
     const allowedOrigins = [
       process.env.ORIGIN_URI,  // development
-      'https://your-frontend-domain.com', // add your frontend production domain
+      'https://ai-study-planner-buddy.netlify.app/register', // add your frontend production domain
       'http://localhost:5173'  // local development
     ];
     

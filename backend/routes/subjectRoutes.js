@@ -74,7 +74,7 @@ router.post("/subject", protect, authorizeRoles("user", "admin"), async (req, re
 // ✅ Get subjects by user ID
 router.get("/subjects", protect, async (req, res) => {
   try {
-    const { user_id } = req.query;
+    const { user_id } = req.params;
     
     if (!user_id) {
       return res.status(400).json({ message: "User ID is required" });

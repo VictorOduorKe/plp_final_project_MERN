@@ -1,19 +1,26 @@
-const jwt=require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 
 // Function to generate JWT
-exports.generateToken = (res,payload, expiresIn = "1h") => {
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn });
-   // Set the cookie with appropriate options for cross-origin
-   res.cookie("token", token, {
-    httpOnly: true,
-    secure: true,  // Required for cross-origin
-    sameSite: 'None',  // Capital N is important for some browsers
-    maxAge: expiresIn === "1h" ? 3600000 : expiresIn === "12h" ? 43200000 : 86400000,
-    domain: '.onrender.com',  // Allow subdomains
-    path: '/'
-});
+exports.generateToken = (res, payload, expiresIn = "1h") => {
+  const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn });
 
-    return token;
+  const domain =
+    process.env.NODE_ENV === "production"
+      ? ".onrender.com"
+      : "localhost";
+
+  // Set the cookie with appropriate options for cross-origin
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+    maxAge: expiresIn === "1h" ? 3600000 : expiresIn === "12h" ? 43200000 : 86400000,
+    domain: process.env.NODE_ENV === "production" ? ".onrender.com" : "localhost",
+    path: "/",
+  });
+
+
+  return token;
 };
 
 // Middleware to verify JWT

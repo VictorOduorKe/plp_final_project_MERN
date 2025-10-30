@@ -21,29 +21,33 @@ const PORT = 3000;
 app.use(cookieParser());
 
 // ✅ CORS configuration
-app.use(cors({
+const corsOptions = {
   origin: 'https://ai-study-planner-buddy.netlify.app',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
   exposedHeaders: ['Set-Cookie']
-}));
+};
+
+app.use(cors(corsOptions));
 
 
-// Handle OPTIONS preflight requests
-app.options('*', cors());
-
-app.use(express.json());
-dbConnection();
-
-// Add security headers
+// Enable pre-flight requests for all routes
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Origin', 'https://ai-study-planner-buddy.netlify.app');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Cookie');
+  
+  // Handle OPTIONS method
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
   next();
 });
+
+app.use(express.json());
+dbConnection();
 
 app.get("/", (req, res) => {
   res.send("Hello Express.js 🚀");

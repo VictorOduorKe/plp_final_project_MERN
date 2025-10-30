@@ -22,7 +22,6 @@ const AddSubject = () => {
 
   const storedUser = localStorage.getItem("user");
   const user_id = storedUser ? JSON.parse(storedUser)?.id : null;
-  const token = localStorage.getItem("token");
 
   useEffect(() => {
     if (!user_id) return;
@@ -31,15 +30,21 @@ const AddSubject = () => {
       try {
         const res = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/subjects?user_id=${user_id}`,
-          { headers: { Authorization: `Bearer ${token}` } }
+          {
+            withCredentials: true
+          }
         );
+
 
         // 🔍 Mark whether each subject already has a plan
         const subjectsWithPlanStatus = await Promise.all(
           res.data.map(async (subject) => {
             try {
               const planCheck = await axios.get(
-                `${import.meta.env.VITE_API_URL}/plan?user_id=${user_id}&subject_id=${subject._id}`
+                `${import.meta.env.VITE_API_URL}/plan?user_id=${user_id}&subject_id=${subject._id}`,
+                {
+                  withCredentials: true
+                }
               );
               return {
                 ...subject,
@@ -89,8 +94,7 @@ const AddSubject = () => {
         `${import.meta.env.VITE_API_URL}/api/subject`,
         newSubject,
         {
-          headers: { Authorization: `Bearer ${token}` },
-          withCredentials: true,
+          withCredentials: true
         }
       );
 
@@ -142,9 +146,7 @@ const AddSubject = () => {
     try {
       await axios.delete(`${import.meta.env.VITE_API_URL}/api/subjects/${id}`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          withCredentials: true
         }
       );
       setSubjects(subjects.filter((s) => s._id !== id));

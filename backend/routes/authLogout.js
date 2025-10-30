@@ -1,10 +1,16 @@
 const express = require("express");
 const router = express.Router();
 
+// POST /auth/logout
 router.post("/logout", (req, res) => {
   try {
-    // Clear JWT cookie (if you were using cookies)
-    res.clearCookie("token", { httpOnly: true, sameSite: "strict", secure: false });
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/", // ✅ important — cookie path must match
+      maxAge: 0,
+    });
 
     console.log("User logged out");
     return res.status(200).json({ message: "Logged out successfully" });
@@ -13,5 +19,4 @@ router.post("/logout", (req, res) => {
     return res.status(500).json({ message: "Server error during logout" });
   }
 });
-
 module.exports = router;

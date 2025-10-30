@@ -1,20 +1,15 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
-import { AuthContext } from "../../context/AuthContext";
 
 const AllUsers = () => {
   const [users, setUsers] = useState([]);
-  const { token } = useContext(AuthContext); // ✅ get JWT from context
+  // cookie-based auth: server will validate via httpOnly cookie, no token required here
 
   useEffect(() => {
     const fetchUsers = async () => {
-      if (!token) return; // stop if not logged in
-
       try {
         const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/admin/users`, {
-          headers: {
-            Authorization: `Bearer ${token}`, // ✅ send JWT
-          },
+          withCredentials: true,
         });
         setUsers(res.data);
       } catch (err) {
@@ -23,7 +18,7 @@ const AllUsers = () => {
     };
 
     fetchUsers();
-  }, [token]);
+  }, []);
 
   return (
     <div className="max-w-5xl mx-auto p-6">

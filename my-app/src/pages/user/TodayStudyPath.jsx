@@ -17,7 +17,25 @@ const TodayStudyPath = () => {
     const loadPlan = async () => {
       try {
         const data = await fetchPlanBySubject(user_id, subjectId);
+        
+        // Handle case where no plan is found
+        if (!data || data.message === "No plan found") {
+          console.warn("No study plan found");
+          setPlan(null);
+          setCurrentWeek(null);
+          setTodayTask(null);
+          return;
+        }
+
         setPlan(data);
+
+        // Make sure we have a plan with weekly_plan before proceeding
+        if (!data.plan || !data.plan.weekly_plan || !Array.isArray(data.plan.weekly_plan)) {
+          setPlan(null);
+          setCurrentWeek(null);
+          setTodayTask(null);
+          return;
+        }
 
         const createdDate = new Date(data.createdAt);
         const now = new Date();
@@ -27,7 +45,9 @@ const TodayStudyPath = () => {
         const dayIndex = diffDays % 7;
 
         if (weekIndex >= data.plan.weekly_plan.length) {
-          console.warn("Study plan completed 🎓");
+          setPlan(null);
+          setCurrentWeek(null);
+          setTodayTask(null);
           return;
         }
 
@@ -45,8 +65,41 @@ const TodayStudyPath = () => {
     loadPlan();
   }, [user_id, subjectId]);
 
-  if (!plan) return <p>Loading plan...</p>;
-  if (!currentWeek || !todayTask) return <p>No study plan available for today 🎓</p>;
+  if (!plan) {
+    return (
+      <div className="text-center py-8">
+        <h2 className="text-xl font-semibold mb-4">No Study Plan Found</h2>
+        <p className="text-gray-600">
+          There is no study plan generated for this subject yet. 
+          Please generate a plan first to see your daily tasks.
+        </p>
+      </div>
+    );
+  }
+
+  if (!currentWeek || !todayTask) {
+    return (
+      <div className="text-center py-8">
+        <h2 className="text-xl font-semibold mb-4">Study Plan Complete</h2>
+        <p className="text-gray-600">
+          You have completed all the tasks in your current study plan! 🎓
+        </p>
+      </div>
+    );
+  }
+
+  // Ensure plan is valid and has the expected structure
+  if (!plan.plan || !plan.plan.weekly_plan) {
+    return (
+      <div className="text-center py-8">
+        <h2 className="text-xl font-semibold mb-4">Invalid Plan Structure</h2>
+        <p className="text-gray-600">
+          The study plan appears to be corrupted or in an invalid format.
+          Please try regenerating the plan.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 bg-white rounded-xl shadow-md max-w-3xl mx-auto mt-6">
@@ -80,9 +133,18 @@ const TodayStudyPath = () => {
       <div>
         <h3 className="text-lg font-semibold">📚 Recommended Resources</h3>
         <ul className="list-disc ml-6 mt-2 text-gray-700">
-          {plan.plan.resources.textbooks?.map((book, idx) => (
-            <li key={idx}>{book}</li>
-          ))}
+          {plan.plan.resources.textbooks?.map((book, idx) => {
+            if (typeof book === "string") return <li key={idx}>{book}</li>;
+            if (typeof book === "object") {
+              const parts = [];
+              if (book.title) parts.push(book.title);
+              if (book.author) parts.push(`by ${book.author}`);
+              if (book.publisher) parts.push(`(${book.publisher})`);
+              if (book.notes) parts.push(`- ${book.notes}`);
+              return <li key={idx}>{parts.join(" ")}</li>;
+            }
+            return <li key={idx}>{String(book)}</li>;
+          })}
         </ul>
       </div>
     </div>

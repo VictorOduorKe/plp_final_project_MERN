@@ -11,17 +11,21 @@ const contactMessage=require("./routes/contactMessage")
 const paymentRoute=require('./routes/paymentRoute')
 const planRoute = require('./routes/planRoute')
 const answerRoutes = require("./routes/answerRoute");
+const cookieParser = require("cookie-parser");
 
 require("dotenv").config();
 
 const app = express();
 const PORT = 3000;
 
+app.use(cookieParser());
+
 // ✅ CORS (important fix)
 app.use(cors({
   origin: process.env.ORIGIN_URI, // e.g. http://localhost:5173
   credentials: true
 }));
+
 
 app.use(express.json());
 dbConnection();

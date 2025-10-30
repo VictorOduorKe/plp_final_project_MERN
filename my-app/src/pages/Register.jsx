@@ -48,20 +48,28 @@ const Register = () => {
 
     try {
       setLoading(true);
-      const [first_name, second_name] = formData.fullName.split(" ");
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/auth/register`, {
-        first_name,
-        second_name: second_name || "",
+      const [first_name, second_name] = formData.fullName.trim().split(/\s+/, 2);
+      // backend requires a non-empty second_name; if user provided only one name,
+      // use the first_name as a fallback so validation doesn't fail. It's better
+      // to ask for separate fields, but this keeps registration robust for now.
+      const payload = {
+        first_name: first_name || "",
+        second_name: second_name || first_name || "",
         phone_number: formData.phone_number,
         email: formData.email,
         password: formData.password,
         confirmPassword: formData.confirmPassword,
-        otp:formData.otp
+        otp: formData.otp,
+      };
+
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/auth/register`, payload, {
+        withCredentials: true,
       });
       toast.success(res.data.message || "Registration successful!");
     } catch (err) {
-      console.error("❌ Registration failed:", err);
-      toast.error(err.response?.data?.error || "Registration failed");
+      console.error("❌ Registration failed:", err.response || err);
+      const serverMsg = err.response?.data?.error || err.response?.data?.message;
+      toast.error(serverMsg || "Registration failed");
     } finally {
       setLoading(false);
     }

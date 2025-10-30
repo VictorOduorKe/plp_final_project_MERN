@@ -8,7 +8,7 @@ const PracticeAnswer = require("../models/PracticeAnswer");
 //--get an existing plan
 router.get('/', async (req, res) => {
     try {
-        const { user_id, subject_id } = req.query; // ✅ use query for GET
+        const { user_id, subject_id } = req.query;
 
         if (!user_id) {
             return res.status(400).json({ message: "user_id is required" });
@@ -26,7 +26,7 @@ router.get('/', async (req, res) => {
             return res.json(existingPlan);
         }
 
-        return res.json({ message: "No plan found" });
+        return res.status(404).json({ message: "No plan found" });
     } catch (error) {
         console.error("Error fetching plan:", error);
         res.status(500).json({ message: "Server error" });

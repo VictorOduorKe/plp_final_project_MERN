@@ -19,7 +19,6 @@ const ViewPlan = () => {
           { params: { user_id, subject_id: subjectId } }
         );
         setPlanData(res.data);
-        console.log("subject_id: ",subjectId)
       } catch (err) {
         console.error("Failed to load plan:", err);
       } finally {
@@ -35,6 +34,21 @@ const ViewPlan = () => {
     return <p className="text-center mt-10 text-red-500">No plan found.</p>;
 
   const plan = planData.plan;
+
+  const renderResource = (item) => {
+    if (!item && item !== 0) return null;
+    if (typeof item === "string") return item;
+    if (typeof item === "object") {
+      // display common book properties safely
+      const parts = [];
+      if (item.title) parts.push(item.title);
+      if (item.author) parts.push(`by ${item.author}`);
+      if (item.publisher) parts.push(`(${item.publisher})`);
+      if (item.notes) parts.push(`- ${item.notes}`);
+      return parts.join(" ");
+    }
+    return String(item);
+  };
 
   return (
     <div className="max-w-5xl mx-auto py-10 px-5">
@@ -79,13 +93,13 @@ const ViewPlan = () => {
                   {week.daily_tasks?.map((task, idx) => (
                     <li key={idx} className="mb-2">
                       <strong>Day {idx + 1}:</strong> {task.task}
-                      {/*task.examples?.length > 0 && (
+                      {task.examples?.length > 0 && (
                         <ul className="list-decimal ml-5 text-gray-600 mt-1">
                           {task.examples.map((ex, exIdx) => (
                             <li key={exIdx}>{ex}</li>
                           ))}
                         </ul>
-                      )*/}
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -115,7 +129,7 @@ const ViewPlan = () => {
             <h3 className="text-lg font-semibold">📘 Textbooks</h3>
             <ul className="list-disc ml-6 mb-4">
               {plan.resources.textbooks.map((book, i) => (
-                <li key={i}>{book}</li>
+                <li key={i}>{renderResource(book)}</li>
               ))}
             </ul>
           </>
@@ -126,7 +140,7 @@ const ViewPlan = () => {
             <h3 className="text-lg font-semibold">💻 Online Platforms</h3>
             <ul className="list-disc ml-6 mb-4">
               {plan.resources.online_platforms.map((p, i) => (
-                <li key={i}>{p}</li>
+                <li key={i}>{renderResource(p)}</li>
               ))}
             </ul>
           </>
@@ -137,7 +151,7 @@ const ViewPlan = () => {
             <h3 className="text-lg font-semibold">📺 YouTube Channels</h3>
             <ul className="list-disc ml-6">
               {plan.resources.youtube_channels.map((channel, i) => (
-                <li key={i}>{channel}</li>
+                <li key={i}>{renderResource(channel)}</li>
               ))}
             </ul>
           </>

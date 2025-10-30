@@ -31,20 +31,20 @@ export const fetchPlanBySubject = async (user_id, subject_id) => {
 
 
 export const fetchPracticeExams = async (user_id) => {
-  const token=localStorage.getItem("token")
   try {
     const response = await axios.get(
       `${import.meta.env.VITE_API_URL}/plan/practice-exams`,
       {
         params: { user_id },
         timeout: 20000, // ⏱️ 20 seconds
-        headers:{Authorization:`Bearer ${token}`}
+        withCredentials: true,
       }
     );
 
     console.log("✅ Fetched Practice Exams:", response.data);
-    if(!response.data){
-      return console.log("NO data found")
+    if (!response.data) {
+      console.log("NO data found");
+      return null;
     }
     return response.data;
   } catch (error) {

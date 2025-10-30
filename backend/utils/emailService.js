@@ -2,25 +2,16 @@
 const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
-  service: "gmail",
   host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
+  port: 587, // use STARTTLS not 465
+  secure: false,
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS, // This will be your Gmail App Password
+    pass: process.env.EMAIL_PASS,
   },
-  // Increase timeout settings
-  connectionTimeout: 30000, // 30 seconds
-  greetingTimeout: 30000,
-  socketTimeout: 60000,
-  // Add pool configuration
-  pool: true,
-  maxConnections: 1,
-  maxMessages: 50,
-  rateDelta: 2000,
-  rateLimit: 2,
+  tls: { rejectUnauthorized: false }
 });
+
 
 async function retry(fn, retries = 3, delay = 2000) {
   for (let i = 0; i < retries; i++) {

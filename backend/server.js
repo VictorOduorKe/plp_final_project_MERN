@@ -20,10 +20,25 @@ const PORT = 3000;
 
 app.use(cookieParser());
 
-// ✅ CORS (important fix)
+// ✅ CORS configuration for production and development
 app.use(cors({
-  origin: process.env.ORIGIN_URI, // e.g. http://localhost:5173
-  credentials: true
+  origin: function(origin, callback) {
+    // Allow requests from your frontend domains
+    const allowedOrigins = [
+      process.env.ORIGIN_URI,  // development
+      'https://your-frontend-domain.com', // add your frontend production domain
+      'http://localhost:5173'  // local development
+    ];
+    
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
 }));
 
 

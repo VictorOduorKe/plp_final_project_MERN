@@ -6,10 +6,10 @@ const router = express.Router();
 
 router.post("/register", async (req, res) => {
   try {
-    const { first_name, second_name, phone_number, email, password, confirmPassword, otp } = req.body;
+    const { first_name, second_name, phone_number, email, password, confirmPassword} = req.body;
 
     // ✅ 1. Validate required fields
-    if (!first_name || !second_name || !phone_number || !email || !password || !confirmPassword || !otp) {
+    if (!first_name || !second_name || !phone_number || !email || !password || !confirmPassword) {
       return res.status(400).json({ error: "All fields are required" });
     }
 
@@ -39,13 +39,13 @@ router.post("/register", async (req, res) => {
     }
 
     // ✅ 6. Find OTP record
-    const otpRecord = await OTP.findOne({ email });
+    /*const otpRecord = await OTP.findOne({ email });
     if (!otpRecord) {
       return res.status(400).json({ error: "OTP not found or not requested" });
-    }
+    }*/
 
     // ✅ 7. Check expiration
-    if (new Date(otpRecord.expires_at) < new Date()) {
+    /*if (new Date(otpRecord.expires_at) < new Date()) {
       return res.status(400).json({ error: "OTP has expired" });
     }
 
@@ -53,7 +53,7 @@ router.post("/register", async (req, res) => {
     const isOtpValid = await bcrypt.compare(otp.toString(), otpRecord.otp_hash);
     if (!isOtpValid) {
       return res.status(400).json({ error: "Invalid OTP. Registration stopped." });
-    }
+    }*/
 
     // ✅ 9. Hash password and create user
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -67,7 +67,7 @@ router.post("/register", async (req, res) => {
     });
 
     // ✅ 10. Delete OTP after success
-    await OTP.deleteOne({ email });
+    /*await OTP.deleteOne({ email });*/
 
     return res.status(201).json({
       message: "✅ User registered successfully",

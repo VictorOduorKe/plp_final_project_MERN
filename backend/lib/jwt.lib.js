@@ -7,8 +7,9 @@ exports.generateToken = (res,payload, expiresIn = "1h") => {
    res.cookie("token", token, {
     httpOnly: true,
     secure: true,  // Required for cross-origin
-    sameSite: 'none',  // Required for cross-origin
+    sameSite: 'None',  // Capital N is important for some browsers
     maxAge: expiresIn === "1h" ? 3600000 : expiresIn === "12h" ? 43200000 : 86400000,
+    domain: '.onrender.com',  // Allow subdomains
     path: '/'
 });
 

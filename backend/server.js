@@ -18,29 +18,32 @@ require("dotenv").config();
 const app = express();
 const PORT = 3000;
 
+// Trust the first proxy
+app.set('trust proxy', 1);
+
 app.use(cookieParser());
 
 // ✅ CORS configuration
 const corsOptions = {
-  origin: function(origin, callback) {
-    const allowedOrigins = [
-      'https://ai-study-planner-buddy.netlify.app',
-      'http://localhost:5173'
-    ];
-    
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: 'https://ai-study-planner-buddy.netlify.app',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
-  exposedHeaders: ['Set-Cookie']
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'X-Requested-With'],
+  exposedHeaders: ['Set-Cookie'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 };
 
+// Apply CORS configuration
 app.use(cors(corsOptions));
+
+// Additional headers for cookies
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Cookie');
+  res.header('Access-Control-Expose-Headers', 'Set-Cookie');
+  next();
+});
 
 
 // Enable pre-flight requests for all routes

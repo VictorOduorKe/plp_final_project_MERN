@@ -38,7 +38,18 @@ router.post("/login", async (req, res) => {
       { expiresIn: "12h" }
     );*/
 
-    const token=generateToken(res,{ id: user._id, role: user.role },"12h");
+    const token = generateToken(res, { id: user._id, role: user.role }, "12h");
+    
+    console.log('Cookie being set:', {
+      token: token.slice(0, 10) + '...',
+      cookieOptions: {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'None',
+        domain: '.onrender.com',
+        path: '/'
+      }
+    });
 
     // 5️⃣ Return token and user info
     res.status(200).json({

@@ -6,7 +6,31 @@ const Plan =require("../models/Plan.js")
 const router = express.Router();
 const {protect,authorizeRoles}=require('../middleware/authMiddleware.js');
 const verifyToken=require("../lib/jwt.lib").verifyToken;
-// ✅ Add a new subject
+// ✅ Get subjects by user ID
+router.get("/subjects", protect, async (req, res) => {
+  try {
+    const { user_id } = req.query;
+    console.log('Fetching subjects for user:', user_id);
+    
+    if (!user_id) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+
+    // Verify the authenticated user is requesting their own subjects
+    if (user_id !== req.user.id.toString()) {
+      console.log('User ID mismatch:', { requestedId: user_id, authenticatedId: req.user.id });
+      return res.status(403).json({ message: "Not authorized to access these subjects" });
+    }
+
+    const subjects = await Subject.find({ user_id });
+    console.log('Subjects found:', subjects.length);
+    res.json(subjects);
+  } catch (err) {
+    console.error("Error fetching subjects:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 // ✅ Add a new subject
 router.post("/subject", protect, authorizeRoles("user", "admin"), async (req, res) => {
   try {

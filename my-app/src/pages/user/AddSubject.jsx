@@ -29,8 +29,9 @@ const AddSubject = () => {
     const fetchSubjects = async () => {
       try {
         const res = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/subjects?user_id=${user_id}`,
+          `${import.meta.env.VITE_API_URL}/api/subjects`,
           {
+            params: { user_id },
             withCredentials: true
           }
         );

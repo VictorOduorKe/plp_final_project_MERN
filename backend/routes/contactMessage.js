@@ -2,7 +2,8 @@
 const express = require("express");
 const router = express.Router();
 const { sendContactEmail } = require("../utils/emailService");
-
+const { hideConsoleLogInProduction } = require("../lib/helper").hideConsoleLogInProduction; 
+// POST /contact-message
 router.post("/contact-message", async (req, res) => {
   const { name, email, subject, message } = req.body;
 
@@ -31,7 +32,7 @@ router.post("/contact-message", async (req, res) => {
 
     res.status(200).json({ message: "Message sent successfully" });
   } catch (err) {
-    console.error("Contact email error:", err);
+    hideConsoleLogInProduction("Contact email error:", err);
     res.status(500).json({ message: "Failed to send message" });
   }
 });

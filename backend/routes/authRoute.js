@@ -3,7 +3,7 @@ const User = require("../models/User");
 const OTP = require("../models/Otp");
 const bcrypt = require("bcrypt");
 const router = express.Router();
-
+const { hideConsoleLogInProduction } = require("../lib/helper").hideConsoleLogInProduction;
 router.post("/register", async (req, res) => {
   try {
     const { first_name, second_name, phone_number, email, password, confirmPassword} = req.body;
@@ -80,7 +80,7 @@ router.post("/register", async (req, res) => {
     });
 
   } catch (error) {
-    console.error("❌ Registration error:", error);
+    hideConsoleLogInProduction("❌ Registration error:", error);
     return res.status(500).json({ error: "Failed to register user" });
   }
 });

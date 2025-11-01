@@ -1,13 +1,12 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 dotenv.config();
-
-
+import {hideConsoleLogInProduction} from "./lib/helper.js";
 export async function dbConnection() {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
-    console.log("✅ Database connected");
+    hideConsoleLogInProduction("✅ Database connected");
   } catch (error) {
-    console.error("❌ Error occurred:", error);
+    hideConsoleLogInProduction("❌ Error occurred:", error);
   }
 }

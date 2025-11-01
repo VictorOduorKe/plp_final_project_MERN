@@ -1,6 +1,6 @@
 const User=require("../models/User");
 const Quizes=require("../models/Quizes")
-
+const {hideConsoleLogInProduction}=require("../lib/helper").hideConsoleLogInProduction;
 const getQuizes= async (req,res)=>{
 
     try {
@@ -20,7 +20,7 @@ if(!checkIfQuizesExistForSubject){
 }
 return checkIfQuizesExistForSubject
     } catch (error) {
-        console.error("Quizes error: ",error)
+        hideConsoleLogInProduction("Quizes error: ",error)
     }
 
 }

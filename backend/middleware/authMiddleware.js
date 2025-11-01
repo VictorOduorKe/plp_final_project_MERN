@@ -1,18 +1,16 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
-
-
-
+const {hideConsoleLogInProduction} = require("../lib/helper");
 const protect = async (req, res, next) => {
   let token;
-  
-  console.log('Cookies received:', req.cookies);
-  console.log('Headers received:', req.headers);
+
+  hideConsoleLogInProduction('Cookies received:', req.cookies);
+  hideConsoleLogInProduction('Headers received:', req.headers);
 
   // ✅ Check cookies first
   if (req.cookies?.token) {
     token = req.cookies.token;
-    console.log('Token found in cookies', token);
+    hideConsoleLogInProduction('Token found in cookies', token);
   }
   // ✅ Then check Authorization header
   else if (
@@ -20,11 +18,11 @@ const protect = async (req, res, next) => {
     req.headers.authorization.startsWith("Bearer ")
   ) {
     token = req.headers.authorization.split(" ")[1];
-    console.log('Token found in Authorization header',token);
+    hideConsoleLogInProduction('Token found in Authorization header',token);
   }
 
   if (!token) {
-    console.log('No token found in request');
+    hideConsoleLogInProduction('No token found in request');
     return res.status(401).json({ message: "Not authorized, no token" });
   }
 
@@ -33,14 +31,14 @@ const protect = async (req, res, next) => {
     req.user = await User.findById(decoded.id).select("-password");
     
     if (!req.user) {
-      console.log('User not found with token payload');
+      hideConsoleLogInProduction('User not found with token payload');
       return res.status(401).json({ message: "User not found" });
     }
-    
-    console.log('Authentication successful for user:', req.user._id);
+
+    hideConsoleLogInProduction('Authentication successful for user:', req.user._id);
     next();
   } catch (err) {
-    console.error("JWT error:", err);
+    hideConsoleLogInProduction("JWT error:", err);
     return res.status(401).json({ message: "Not authorized, token invalid" });
   }
 };

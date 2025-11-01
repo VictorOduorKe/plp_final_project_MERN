@@ -5,12 +5,13 @@ const Payments=require('../models/Payment.js')
 const Plan =require("../models/Plan.js")
 const router = express.Router();
 const {protect,authorizeRoles}=require('../middleware/authMiddleware.js');
+const {hideConsoleLogInProduction}=require("../lib/helper");
 const verifyToken=require("../lib/jwt.lib").verifyToken;
 // ✅ Get subjects by user ID
 router.get("/subjects", protect, async (req, res) => {
   try {
     const { user_id } = req.query;
-    console.log('Fetching subjects for user:', user_id);
+    hideConsoleLogInProduction('Fetching subjects for user:', user_id);
     
     if (!user_id) {
       return res.status(400).json({ message: "User ID is required" });
@@ -18,15 +19,15 @@ router.get("/subjects", protect, async (req, res) => {
 
     // Verify the authenticated user is requesting their own subjects
     if (user_id !== req.user.id.toString()) {
-      console.log('User ID mismatch:', { requestedId: user_id, authenticatedId: req.user.id });
+      hideConsoleLogInProduction('User ID mismatch:', { requestedId: user_id, authenticatedId: req.user.id });
       return res.status(403).json({ message: "Not authorized to access these subjects" });
     }
 
     const subjects = await Subject.find({ user_id });
-    console.log('Subjects found:', subjects.length);
+    hideConsoleLogInProduction('Subjects found:', subjects.length);
     res.json(subjects);
   } catch (err) {
-    console.error("Error fetching subjects:", err);
+   hideConsoleLogInProduction("Error fetching subjects:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -66,7 +67,7 @@ router.post("/subject", protect, authorizeRoles("user", "admin"), async (req, re
     return res.status(201).json(savedSubject);
 
   } catch (err) {
-    console.error("❌ Error adding subject:", err);
+   hideConsoleLogInProduction("❌ Error adding subject:", err);
     return res.status(500).json({ message: "Server error" });
   }
 });
@@ -83,7 +84,7 @@ router.get("/subjects", protect, async (req, res) => {
     const subjects = await Subject.find({ user_id });
     res.status(200).json(subjects);
   } catch (err) {
-    console.error("❌ Error fetching subjects:", err);
+   hideConsoleLogInProduction("❌ Error fetching subjects:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -100,7 +101,7 @@ router.delete("/subjects/:id", protect, authorizeRoles("user", "admin"), async (
 
     res.status(200).json({ message: "Subject and related plans deleted successfully" });
   } catch (err) {
-    console.error("❌ Error deleting subject:", err);
+   hideConsoleLogInProduction("❌ Error deleting subject:", err);
     res.status(500).json({ message: "Server error" });
   }
 });

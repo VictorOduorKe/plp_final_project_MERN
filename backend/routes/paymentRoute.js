@@ -4,8 +4,7 @@ const router = express.Router();
 const crypto = require("crypto");
 const axios = require("axios");
 const { parse } = require("path");
-
-// 1. Start a payment
+const {hideConsoleLogInProduction}=require("../lib/helper");
 router.post("/", async (req, res) => {
   try {
     const { user_id, phone, account_number, method, email, package } = req.body;
@@ -67,7 +66,7 @@ router.post("/", async (req, res) => {
       payment,
     });
   } catch (error) {
-    console.error("Error creating payment:", error.response?.data || error.message);
+    hideConsoleLogInProduction("Error creating payment:", error.response?.data || error.message);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 });
@@ -97,7 +96,7 @@ router.post("/webhook", express.json({ type: "*/*" }), async (req, res) => {
       let payment = await Payment.findOne({ reference: data.reference });
 
       if (!payment) {
-        console.error("❌ Payment not found for reference:", data.reference);
+        hideConsoleLogInProduction("❌ Payment not found for reference:", data.reference);
         return res.status(404).json({ message: "Payment record not found" });
       }
 
@@ -113,7 +112,7 @@ router.post("/webhook", express.json({ type: "*/*" }), async (req, res) => {
       const expiresAt = new Date();
       expiresAt.setDate(expiresAt.getDate() + durationDays);
 
-      console.log(`✅ Package: ${pkg}, Duration: ${durationDays} days, Expires: ${expiresAt}`);
+      hideConsoleLogInProduction(`✅ Package: ${pkg}, Duration: ${durationDays} days, Expires: ${expiresAt}`);
 
       // ✅ Update all payment fields securely
       payment.status = "paid";
@@ -122,7 +121,7 @@ router.post("/webhook", express.json({ type: "*/*" }), async (req, res) => {
 
       await payment.save();
 
-      console.log("✅ Payment updated successfully:", payment._id);
+      hideConsoleLogInProduction("✅ Payment updated successfully:", payment._id);
 
       return res.status(200).json({ message: "Payment confirmed", payment });
     }
@@ -140,7 +139,7 @@ router.post("/webhook", express.json({ type: "*/*" }), async (req, res) => {
 router.get("/status/:user_id", async (req, res) => {
   try {
     const { user_id } = req.params;
-    console.log(user_id)
+   hideConsoleLogInProduction(user_id)
     const payment = await Payment.findOne({ user_id, status:"paid" }).sort({ createdAt: -1 });
     
     if (!payment) {
@@ -174,7 +173,7 @@ router.get("/status/:user_id", async (req, res) => {
       message: `Your ${payment.package} plan is active until ${payment.expiresAt.toDateString()}`,
     });
   } catch (error) {
-    console.error("Status check error:", error);
+    hideConsoleLogInProduction("Status check error:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 });
@@ -256,7 +255,7 @@ router.get("/verify/:reference", async (req, res) => {
     // ❌ If not successful
     return res.status(400).json({ message: "Payment not successful" });
   } catch (error) {
-    console.error(
+    hideConsoleLogInProduction(
       "Verification error:",
       error.response?.data || error.message
     );

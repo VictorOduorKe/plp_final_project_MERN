@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/User.js");
 const { protect, authorizeRoles } = require("../middleware/authMiddleware.js");
-
+const { hideConsoleLogInProduction } = require("../lib/helper").hideConsoleLogInProduction; 
 // ✅ Admin: Get all users
 router.get("/admin/users", protect, authorizeRoles("admin"), async (req, res) => {
   
@@ -11,7 +11,7 @@ router.get("/admin/users", protect, authorizeRoles("admin"), async (req, res) =>
     const users = await User.find().select("-password"); // Hide password
     res.status(200).json(users);
   } catch (error) {
-    console.error("Error fetching users:", error);
+    hideConsoleLogInProduction("Error fetching users:", error);
     res.status(500).json({ message: "Server error fetching users" });
   }
 });
@@ -25,7 +25,7 @@ router.delete("/admin/users/:id", protect, authorizeRoles("admin"), async (req, 
     await user.remove();
     res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
-    console.error("Error deleting user:", error);
+    hideConsoleLogInProduction("Error deleting user:", error);
     res.status(500).json({ message: "Server error deleting user" });
   }
 });
@@ -41,7 +41,7 @@ router.patch("/admin/users/:id/status", protect, authorizeRoles("admin"), async 
 
     res.status(200).json({ message: `User status updated to ${user.status}`, user });
   } catch (error) {
-    console.error("Error updating user status:", error);
+    hideConsoleLogInProduction("Error updating user status:", error);
     res.status(500).json({ message: "Server error updating user status" });
   }
 });

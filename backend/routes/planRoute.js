@@ -5,6 +5,7 @@ const Plan = require('../models/Plan')
 const Subject=require("../models/Subject")
 const Quizes=require("../models/Quizes")
 const PracticeAnswer = require("../models/PracticeAnswer");
+const {hideConsoleLogInProduction}=require("../lib/helper").hideConsoleLogInProduction;
 //--get an existing plan
 router.get('/', async (req, res) => {
     try {
@@ -28,7 +29,7 @@ router.get('/', async (req, res) => {
 
         return res.status(404).json({ message: "No plan found" });
     } catch (error) {
-        console.error("Error fetching plan:", error);
+        hideConsoleLogInProduction("Error fetching plan:", error);
         res.status(500).json({ message: "Server error" });
     }
 });
@@ -294,7 +295,7 @@ router.post("/", async (req, res) => {
 
     // 3️⃣ Validate Gemini API Key
     if (!process.env.GEMINI_API_KEY) {
-      console.error("❌ GEMINI_API_KEY is not configured");
+      hideConsoleLogInProduction("❌ GEMINI_API_KEY is not configured");
       return res.status(500).json({ 
         error: "AI service configuration error",
         details: "GEMINI_API_KEY environment variable is missing" 
@@ -346,7 +347,7 @@ EXAMPLE QUESTION FORMAT:
 
 Return ONLY valid JSON, no additional text or markdown.`;
 
-    console.log("🤖 Calling Gemini API...");
+   hideConsoleLogInProduction("🤖 Calling Gemini API...");
 
     // 5️⃣ Call Gemini API
     const ai = new GoogleGenAI({ 
@@ -363,9 +364,9 @@ Return ONLY valid JSON, no additional text or markdown.`;
           maxOutputTokens: 8000,
         },
       });
-      console.log("✅ Gemini API call successful");
+     hideConsoleLogInProduction("✅ Gemini API call successful");
     } catch (aiError) {
-      console.error("❌ Gemini API Error:", aiError);
+      hideConsoleLogInProduction("❌ Gemini API Error:", aiError);
       return res.status(500).json({
         error: "AI Service Error",
         details: aiError.message
@@ -374,7 +375,7 @@ Return ONLY valid JSON, no additional text or markdown.`;
 
     // 6️⃣ Process AI Response
     const planText = aiResponse.text.trim();
-    console.log("📄 Raw AI Response received");
+    hideConsoleLogInProduction("📄 Raw AI Response received");
 
     let planJSON;
     try {
@@ -386,7 +387,7 @@ Return ONLY valid JSON, no additional text or markdown.`;
         .trim();
 
       planJSON = JSON.parse(cleanedText);
-      console.log("✅ JSON parsing successful");
+      hideConsoleLogInProduction("✅ JSON parsing successful");
       
       // Validate and enhance the structure
       planJSON = enhancePlanWithExams(planJSON, subject);
@@ -394,7 +395,7 @@ Return ONLY valid JSON, no additional text or markdown.`;
     } catch (parseError) {
       console.error("❌ JSON Parse Error:", parseError);
       planJSON = createEnhancedFallbackPlan(subject);
-      console.log("🔄 Using enhanced fallback plan");
+      hideConsoleLogInProduction("🔄 Using enhanced fallback plan");
     }
 
     // 7️⃣ Save Main Study Plan
@@ -405,8 +406,8 @@ Return ONLY valid JSON, no additional text or markdown.`;
       status: "todo",
     });
 
-    await newPlan.save();
-    console.log("💾 Study plan saved successfully");
+      await newPlan.save();
+      console.log("💾 Study plan saved successfully");
 
     
     res.status(201).json({ 
@@ -415,8 +416,8 @@ Return ONLY valid JSON, no additional text or markdown.`;
     });
 
   } catch (error) {
-    console.error("🔥 Plan generation failed:", error);
-    res.status(500).json({ 
+    hideConsoleLogInProduction("🔥 Plan generation failed:", error);
+    res.status(500).json({
       error: "Failed to generate study plan",
       details: error.message
     });
@@ -448,7 +449,7 @@ router.get("/quizzes/:subject_id", async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Error fetching quizzes:", error);
+    hideConsoleLogInProduction("Error fetching quizzes:", error);
     res.status(500).json({ error: "Failed to fetch quizzes" });
   }
 });
@@ -473,7 +474,7 @@ router.get("/quizzes", async (req, res) => {
       total_quizzes: quizzes.length,
     });
   } catch (error) {
-    console.error("Error fetching quizzes:", error);
+    hideConsoleLogInProduction("Error fetching quizzes:", error);
     res.status(500).json({ error: "Failed to fetch quizzes" });
   }
 });
@@ -513,7 +514,7 @@ const plans = await Plan.find({ user_id }).populate("subject_id", "subject_name"
       practice_exams: allExams,
     });
   } catch (error) {
-    console.error("Error fetching practice exams:", error);
+    hideConsoleLogInProduction("Error fetching practice exams:", error);
     res.status(500).json({ error: "Failed to fetch practice exams" });
   }
 });
@@ -544,7 +545,7 @@ router.post("/submit", async (req, res) => {
       total_submitted: savedAnswers.length,
     });
   } catch (error) {
-    console.error("❌ Error saving answers:", error);
+    hideConsoleLogInProduction("❌ Error saving answers:", error);
     res.status(500).json({ error: "Failed to submit answers" });
   }
 });

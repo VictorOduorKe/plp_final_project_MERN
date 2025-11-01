@@ -3,6 +3,7 @@ const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const OTP = require("../models/Otp");
 const { sendWelcomeEmail } = require("../utils/emailService"); // function to send email
+const {hideConsoleLogInProduction}=require("../lib/helper").hideConsoleLogInProduction;
 
 const router = express.Router();
 
@@ -18,7 +19,7 @@ async function generateAndSaveOTP(email) {
     { upsert: true, new: true, setDefaultsOnInsert: true }
   );
 
-  console.log("📦 OTP saved:", otpDoc); // ✅ Debug log
+  hideConsoleLogInProduction("📦 OTP saved:", otpDoc); // ✅ Debug log
   return otp;
 }
 
@@ -39,7 +40,7 @@ router.post("/otp", async (req, res) => {
 
     return res.status(200).json({ message: "OTP sent successfully" });
   } catch (error) {
-    console.error("❌ OTP generation failed:", error);
+    hideConsoleLogInProduction("❌ OTP generation failed:", error);
     return res.status(500).json({ error: "Failed to generate OTP" });
   }
 });

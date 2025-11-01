@@ -6,12 +6,11 @@ const User = require("../models/User");
 const generateToken=require("../lib/jwt.lib").generateToken;
 const verifyToken=require("../lib/jwt.lib").verifyToken;
 const router = express.Router();
-
-// POST /auth/login
+const {hideConsoleLogInProduction}=require("../lib/helper")
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log("Login attempt:", req.body, Date());
+    hideConsoleLogInProduction("Login attempt:", req.body, Date());
 
     // 1️⃣ Validate input
     if (!email || !password) {
@@ -39,8 +38,8 @@ router.post("/login", async (req, res) => {
     );*/
 
     const token = generateToken(res, { id: user._id, role: user.role }, "12h");
-    
-    console.log('Cookie being set:', {
+
+    hideConsoleLogInProduction('Cookie being set:', {
       token: token.slice(0, 10) + '...',
       cookieOptions: {
         httpOnly: true,
@@ -63,7 +62,7 @@ router.post("/login", async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Login error:", error);
+    hideConsoleLogInProduction("Login error:", error);
     res.status(500).json({ error: "Server error" });
   }
 });

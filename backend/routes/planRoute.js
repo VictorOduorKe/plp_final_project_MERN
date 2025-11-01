@@ -5,7 +5,7 @@ const Plan = require('../models/Plan')
 const Subject=require("../models/Subject")
 const Quizes=require("../models/Quizes")
 const PracticeAnswer = require("../models/PracticeAnswer");
-const {hideConsoleLogInProduction}=require("../lib/helper").hideConsoleLogInProduction;
+const {hideConsoleLogInProduction}=require("../lib/helper")
 //--get an existing plan
 router.get('/', async (req, res) => {
     try {

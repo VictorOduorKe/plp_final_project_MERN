@@ -2,7 +2,7 @@
 const express = require("express");
 const router = express.Router();
 const { sendContactEmail } = require("../utils/emailService");
-const { hideConsoleLogInProduction } = require("../lib/helper").hideConsoleLogInProduction; 
+const { hideConsoleLogInProduction } = require("../lib/helper")
 // POST /contact-message
 router.post("/contact-message", async (req, res) => {
   const { name, email, subject, message } = req.body;

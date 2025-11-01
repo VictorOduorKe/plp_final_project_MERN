@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/User.js");
 const { protect, authorizeRoles } = require("../middleware/authMiddleware.js");
-const { hideConsoleLogInProduction } = require("../lib/helper").hideConsoleLogInProduction; 
+const { hideConsoleLogInProduction } = require("../lib/helper")
 // ✅ Admin: Get all users
 router.get("/admin/users", protect, authorizeRoles("admin"), async (req, res) => {
   

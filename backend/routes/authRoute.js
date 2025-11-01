@@ -3,7 +3,7 @@ const User = require("../models/User");
 const OTP = require("../models/Otp");
 const bcrypt = require("bcrypt");
 const router = express.Router();
-const { hideConsoleLogInProduction } = require("../lib/helper").hideConsoleLogInProduction;
+const { hideConsoleLogInProduction } = require("../lib/helper")
 router.post("/register", async (req, res) => {
   try {
     const { first_name, second_name, phone_number, email, password, confirmPassword} = req.body;

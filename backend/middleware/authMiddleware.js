@@ -1,18 +1,19 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const {hideConsoleLogInProduction} = require("../lib/helper");
+
 const protect = async (req, res, next) => {
   let token;
 
   hideConsoleLogInProduction('Cookies received:', req.cookies);
   hideConsoleLogInProduction('Headers received:', req.headers);
 
-  // ✅ Check cookies first
+  // Check cookies first
   if (req.cookies?.token) {
     token = req.cookies.token;
     hideConsoleLogInProduction('Token found in cookies', token);
   }
-  // ✅ Then check Authorization header
+  // Then check Authorization header
   else if (
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer ")

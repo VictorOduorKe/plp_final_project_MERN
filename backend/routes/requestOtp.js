@@ -3,7 +3,7 @@ const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const OTP = require("../models/Otp");
 const { sendWelcomeEmail } = require("../utils/emailService"); // function to send email
-const {hideConsoleLogInProduction}=require("../lib/helper").hideConsoleLogInProduction;
+const {hideConsoleLogInProduction}=require("../lib/helper")
 
 const router = express.Router();
 

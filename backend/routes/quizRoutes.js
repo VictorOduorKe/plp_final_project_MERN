@@ -1,6 +1,6 @@
 const User=require("../models/User");
 const Quizes=require("../models/Quizes")
-const {hideConsoleLogInProduction}=require("../lib/helper").hideConsoleLogInProduction;
+const {hideConsoleLogInProduction}=require("../lib/helper")
 const getQuizes= async (req,res)=>{
 
     try {

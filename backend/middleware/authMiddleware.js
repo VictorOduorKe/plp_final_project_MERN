@@ -12,7 +12,7 @@ const protect = async (req, res, next) => {
   // ✅ Check cookies first
   if (req.cookies?.token) {
     token = req.cookies.token;
-    console.log('Token found in cookies');
+    console.log('Token found in cookies', token);
   }
   // ✅ Then check Authorization header
   else if (
@@ -20,7 +20,7 @@ const protect = async (req, res, next) => {
     req.headers.authorization.startsWith("Bearer ")
   ) {
     token = req.headers.authorization.split(" ")[1];
-    console.log('Token found in Authorization header');
+    console.log('Token found in Authorization header',token);
   }
 
   if (!token) {

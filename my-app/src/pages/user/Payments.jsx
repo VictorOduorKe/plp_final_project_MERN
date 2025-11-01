@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios"
 import {toast} from "react-toastify"
-
+import { hideConsoleLogInProduction } from "../../context/hideLogs";
 
 const Payment = () => {
   const [formData, setFormData] = useState({
@@ -33,11 +33,11 @@ const res = await axios.post(
         package: formData.plan,
       }
     );
-    console.log(formData)
+   hideConsoleLogInProduction("Payment data:", formData);
     const { authorization_url } = res.data;
      window.location.href = authorization_url;
    } catch (error) {
-    console.error("Payment error:", error.response?.data || error.message);
+    hideConsoleLogInProduction("Payment error:", error);
     toast.error(
       error.response?.data?.message ||
         "Failed to start payment. Please try again."

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { hideConsoleLogInProduction } from "../../context/hideLogs";
+// import { hideConsoleLogInProduction } from "./hideLogs"; --- IGNORE ---
 
 const ViewPlan = () => {
   const { subjectId } = useParams();
@@ -20,7 +22,7 @@ const ViewPlan = () => {
         );
         setPlanData(res.data);
       } catch (err) {
-        console.error("Failed to load plan:", err);
+        hideConsoleLogInProduction("Failed to load plan:", err);
       } finally {
         setLoading(false);
       }

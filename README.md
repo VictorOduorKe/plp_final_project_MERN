@@ -55,6 +55,25 @@ plp_final_project_MERN/
     └── package.json    # Frontend dependencies
 ```
 
+**Project images**
+for now eail otp is disabled
+(home page)
+[Home page](./images/home.png)
+
+(Register page)
+[Register page](./images/register.png)
+
+(Login page)
+[Login page](./images/login.png)
+
+(User Dashboard page)
+[User Dashboard page](./images/dashboard.png)
+
+
+# VISIST LIVE SITE HERE
+
+[Visit live site](https://ai-study-planner-buddy.netlify.app)
+
 ## 🛠️ Setup Instructions
 
 ### Prerequisites
@@ -66,13 +85,15 @@ plp_final_project_MERN/
 ### Environment Variables
 
 #### Backend (.env)
-```
-MONGODB_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret_key
-GOOGLE_API_KEY=your_google_api_key
+``` bash
+DB_NAME=my_study_budy_ai
 EMAIL_USER=your_email
-EMAIL_PASS=your_email_app_password
+EMAIL_PASS=your_app_password
 ORIGIN_URI=http://localhost:5173
+JWT_SECRET=your_secret_code
+PAYSTACK_SECRET_KEY=sk_live_key(paystack)
+GEMINI_API_KEY=your_gemini_api_key
+NODE_ENV=development
 ```
 
 #### Frontend (.env)
@@ -106,10 +127,16 @@ cd backend
 npm run dev
 ```
 
+
 5. Start the frontend development server
 ```bash
 cd my-app
 npm run dev
+```
+**Create a .env in frontend(my-app) with these**
+```bash
+VITE_API_URL=http://localhost:3000
+VITE_NODE_ENV=development
 ```
 
 The application will be available at:

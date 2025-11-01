@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { generatePlan } from "../../context/GeneratePlan";
+import { hideConsoleLogInProduction } from "../../context/hideLogs";
+// import { hideConsoleLogInProduction } from "./hideLogs"; --- IGNORE ---
 
 const CLASS_LEVELS = {
   Primary: ["Grade 1", "Grade 2", "Grade 3", "Grade 4", "Grade 5", "Grade 6"],
@@ -63,7 +65,7 @@ const AddSubject = () => {
 
         setSubjects(subjectsWithPlanStatus);
       } catch (err) {
-        console.error("Error loading subjects:", err);
+        hideConsoleLogInProduction("Error loading subjects:", err);
       }
     };
 
@@ -113,7 +115,7 @@ const AddSubject = () => {
       // Now users will need to click the "Generate Study Plan" button manually
 
     } catch (err) {
-      console.error("Error adding subject:", err);
+      hideConsoleLogInProduction("Error adding subject:", err);
       toast.error(err.response?.data?.message || "Failed to add subject");
     }
   };
@@ -154,7 +156,7 @@ const AddSubject = () => {
       setSubjects(subjects.filter((s) => s._id !== id));
       toast.info("Subject deleted");
     } catch (err) {
-      console.error("Error deleting subject:", err);
+      hideConsoleLogInProduction("Error deleting subject:", err);
     }
   };
 

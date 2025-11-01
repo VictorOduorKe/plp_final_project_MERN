@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { fetchPlanBySubject } from "../../context/fetchPlanBySubject"; // ✅ use the new one
+import { hideConsoleLogInProduction } from "../../context/hideLogs";
+// import { hideConsoleLogInProduction } from "./hideLogs"; --- IGNORE ---
 
 const TodayStudyPath = () => {
   const { subjectId } = useParams(); // ✅ comes from URL
@@ -58,7 +60,7 @@ const TodayStudyPath = () => {
         const task = thisWeek.daily_tasks[dayIndex];
         setTodayTask(task);
       } catch (error) {
-        console.error("Failed to load plan:", error);
+        hideConsoleLogInProduction("Failed to load plan:", error);
       }
     };
 

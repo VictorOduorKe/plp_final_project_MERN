@@ -1,5 +1,7 @@
 import axios from "axios";
 import { toast } from "react-toastify";
+import { hideConsoleLogInProduction } from "./hideLogs";
+// import { hideConsoleLogInProduction } from "./hideLogs"; --- IGNORE ---  
 
 export const paymentStatus = async (user_id) => {
   try {

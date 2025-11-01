@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-
+import { hideConsoleLogInProduction } from "../../context/hideLogs";
 const AllUsers = () => {
   const [users, setUsers] = useState([]);
   // cookie-based auth: server will validate via httpOnly cookie, no token required here
@@ -13,7 +13,7 @@ const AllUsers = () => {
         });
         setUsers(res.data);
       } catch (err) {
-        console.error("Error loading users: ", err.response?.data || err.message);
+        hideConsoleLogInProduction("Error loading users: ", err.response?.data || err.message);
       }
     };
 

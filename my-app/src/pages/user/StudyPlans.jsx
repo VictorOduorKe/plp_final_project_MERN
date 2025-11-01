@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchPlan } from "../../context/FetchPlan";
-
+import { hideConsoleLogInProduction } from "../../context/hideLogs";
+// import { hideConsoleLogInProduction } from "./hideLogs"; --- IGNORE ---
 const StudyPlans = () => {
   const navigate = useNavigate();
   const [plans, setPlans] = useState([]);
@@ -16,7 +17,7 @@ const StudyPlans = () => {
       if (!user_id) return;
       try {
         const data = await fetchPlan(user_id); // ✅ this is the full plan object
-        console.log("Fetched Plan:", data);
+        hideConsoleLogInProduction("Fetched Plan:", data);
 
         // Wrap in array for mapping
         if (data) {
@@ -26,7 +27,7 @@ const StudyPlans = () => {
           setPlans([normalized]);
         }
       } catch (error) {
-        console.error("Failed to load plans:", error);
+        hideConsoleLogInProduction("Failed to load plans:", error);
       }
     };
 

@@ -1,4 +1,7 @@
 import axios from "axios";
+import { hideConsoleLogInProduction } from "./hideLogs";
+// import { hideConsoleLogInProduction } from "./hideLogs"; --- IGNORE ---
+
 
 export const fetchPlan = async (user_id) => {
   try {
@@ -6,12 +9,12 @@ export const fetchPlan = async (user_id) => {
       params: { user_id },
     });
     if(response){
-      console.log("Fetched Plan (from API):", response.data);
+      hideConsoleLogInProduction("Fetched Plan (from API):", response.data);
       return response.data; 
     }
-    console.log("no plan found")
+    hideConsoleLogInProduction("no plan found");
   } catch (error) {
-    console.error("Fetch plan failed:", error);
+    hideConsoleLogInProduction("Fetch plan failed:", error);
     throw error;
   }
 };
@@ -21,10 +24,10 @@ export const fetchPlanBySubject = async (user_id, subject_id) => {
     const res = await axios.get(
       `${import.meta.env.VITE_API_URL}/plan?user_id=${user_id}&subject_id=${subject_id}`
     );
-    console.log(res.data)
+    hideConsoleLogInProduction(res.data);
     return res.data;
   } catch (error) {
-    console.error("Error fetching plan by subject:", error);
+    hideConsoleLogInProduction("Error fetching plan by subject:", error);
     throw error;
   }
 };
@@ -41,14 +44,14 @@ export const fetchPracticeExams = async (user_id) => {
       }
     );
 
-    console.log("✅ Fetched Practice Exams:", response.data);
+    hideConsoleLogInProduction("✅ Fetched Practice Exams:", response.data);
     if (!response.data) {
-      console.log("NO data found");
+    hideConsoleLogInProduction("NO data found");
       return null;
     }
     return response.data;
   } catch (error) {
-    console.error("❌ Fetch practice exams failed:", error);
+    hideConsoleLogInProduction("❌ Fetch practice exams failed:", error);
     throw error;
   }
 };

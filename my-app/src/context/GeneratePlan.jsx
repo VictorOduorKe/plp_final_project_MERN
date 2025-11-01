@@ -1,6 +1,8 @@
 // context/GeneratePlan.js
 import axios from "axios";
 import { toast } from "react-toastify";
+import { hideConsoleLogInProduction } from "./hideLogs";
+// import { hideConsoleLogInProduction } from "./hideLogs"; --- IGNORE ---
 
 export const generatePlan = async (user_id, subject_id) => {
   try {
@@ -13,7 +15,7 @@ export const generatePlan = async (user_id, subject_id) => {
     toast.success("📘 Generated Plan: successfully");
     return response.data;
   } catch (error) {
-    console.error("❌ Error generating plan:", error);
+    hideConsoleLogInProduction("❌ Error generating plan:", error);
     toast.error("❌ Error generating plan");
     throw error;
   }

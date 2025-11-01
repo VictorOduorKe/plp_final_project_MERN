@@ -1,5 +1,6 @@
 import axios from "axios";
-
+import { hideConsoleLogInProduction } from "./hideLogs";
+// import { hideConsoleLogInProduction } from "./hideLogs"; --- IGNORE ---
 export const fetchQuizes = async (user_id) => {
   try {
     const response = await axios.get(
@@ -10,7 +11,7 @@ export const fetchQuizes = async (user_id) => {
     );
     return response.data;
   } catch (error) {
-    console.error("Error fetching quizzes:", error);
+    hideConsoleLogInProduction("Error fetching quizzes:", error);
     throw error;
   }
 };

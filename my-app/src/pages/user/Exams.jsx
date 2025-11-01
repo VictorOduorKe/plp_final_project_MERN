@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { fetchPracticeExams } from "../../context/FetchPlan";
 import { submitAnswers } from "../../context/submitAnswers";
+import { hideConsoleLogInProduction } from "../../context/hideLogs";
+// import { hideConsoleLogInProduction } from "./hideLogs"; --- IGNORE ---
 
 const Exams = () => {
   const [examsBySubject, setExamsBySubject] = useState({});
@@ -33,7 +35,7 @@ const Exams = () => {
 
         setExamsBySubject(grouped);
       } catch (error) {
-        console.error("❌ Error fetching exams:", error);
+        hideConsoleLogInProduction("❌ Error fetching exams:", error);
       } finally {
         setLoading(false);
       }
@@ -81,9 +83,9 @@ const handleSubmitSubject = async (subject) => {
     });
 
     alert(`✅ ${subject} submitted!\nScore: ${res.correct_answers}/${res.total_questions}`);
-    console.log(`📘 Submitted answers for ${subject}:`, res);
+    handleSelectOption(`📘 Submitted answers for ${subject}:`, res);
   } catch (error) {
-    console.error("❌ Submission error:", error);
+    hideConsoleLogInProduction("❌ Submission error:", error);
     alert(`❌ Failed to submit answers for ${subject}: ${error.message || "Server error"}`);
   } finally {
     setSubmitting(false);

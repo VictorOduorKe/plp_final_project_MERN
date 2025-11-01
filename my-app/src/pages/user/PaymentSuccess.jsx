@@ -1,6 +1,9 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify";
+import { hideConsoleLogInProduction } from "../../context/hideLogs";
+// import { hideConsoleLogInProduction } from "./hideLogs"; --- IGNORE ---
 
 const PaymentSuccess = () => {
   const location = useLocation();
@@ -13,9 +16,9 @@ const PaymentSuccess = () => {
           const res = await axios.get(
             `${import.meta.env.VITE_API_URL}/payment/verify/${reference}`
           );
-          console.log("Verified:", res.data);
+          hideConsoleLogInProduction("Verified:", res.data);
         } catch (error) {
-          console.error("Verification failed:", error.response?.data);
+          hideConsoleLogInProduction("Verification failed:", error.response?.data);
         }
       }
     };

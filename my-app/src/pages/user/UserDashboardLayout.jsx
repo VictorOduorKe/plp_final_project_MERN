@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { paymentStatus } from "../../context/PaymentContext";
+import { hideConsoleLogInProduction } from "../../context/hideLogs";
+// import { hideConsoleLogInProduction } from "./hideLogs"; --- IGNORE ---
 
 const UserDashboardLayout = () => {
   const navigate = useNavigate();
@@ -23,7 +25,7 @@ const UserDashboardLayout = () => {
         const result = await paymentStatus(user_id);
         setStatus(result); 
       } catch (err) {
-        console.error("Failed to fetch payment status:", err);
+        hideConsoleLogInProduction("Failed to fetch payment status:", err);
       }
     };
 

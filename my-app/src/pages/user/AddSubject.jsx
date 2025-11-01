@@ -44,6 +44,7 @@ const AddSubject = () => {
               const planCheck = await axios.get(
                 `${import.meta.env.VITE_API_URL}/plan?user_id=${user_id}&subject_id=${subject._id}`,
                 {
+                  
                   withCredentials: true
                 }
               );

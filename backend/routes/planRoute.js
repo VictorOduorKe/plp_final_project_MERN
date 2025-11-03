@@ -512,6 +512,7 @@ const plans = await Plan.find({ user_id }).populate("subject_id", "subject_name"
       total_exams: allExams.length,
       total_subjects: plans.length,
       practice_exams: allExams,
+      subject_id: plans.map(p => p.subject_id),
     });
   } catch (error) {
     hideConsoleLogInProduction("Error fetching practice exams:", error);

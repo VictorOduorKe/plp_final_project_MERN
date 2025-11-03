@@ -8,13 +8,11 @@ const answerSchema = new mongoose.Schema(
       required: true,
     },
     subject_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Subject",
+      type: String,  // Changed to String to handle both ObjectId and subject names
       required: true,
     },
     exam_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Plan", // or "Exam" if you later make a separate model for exams
+      type: String,  // Changed to String to handle both ObjectId and practice exam IDs
       required: true,
     },
     question_id: {
@@ -32,6 +30,7 @@ const answerSchema = new mongoose.Schema(
     correct_answer: {
       type: String,
       required: true,
+      default: 'Not provided', // Provide a default value
     },
     is_correct: {
       type: Boolean,

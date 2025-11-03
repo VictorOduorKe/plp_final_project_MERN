@@ -17,10 +17,10 @@ export const submitAnswers = async (answersData) => {
       }
     );
     hideConsoleLogInProduction(answersData.subject_id);
-    console.log("✅ Answers submitted:", response.data);
+    hideConsoleLogInProduction("✅ Answers submitted:", response.data);
     return response.data;
   } catch (error) {
-    console.error("❌ Error submitting answers:", error);
+    hideConsoleLogInProduction("❌ Error submitting answers:", error);
     throw error.response?.data || { message: "Submission failed." };
   }
 };

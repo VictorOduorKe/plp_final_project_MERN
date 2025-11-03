@@ -54,7 +54,7 @@ const Exams = () => {
             const text = await resp.text();
             try { return JSON.parse(text); } catch { return null; }
           } catch (e) {
-            console.warn('Failed to fetch subject score', sub, e);
+            hideConsoleLogInProduction('Failed to fetch subject score', sub, e);
             return null;
           }
         };
@@ -71,7 +71,7 @@ const Exams = () => {
           }));
           setSubjectScores(scores);
         } catch (err) {
-          console.warn('Failed to fetch subject scores', err);
+          hideConsoleLogInProduction('Failed to fetch subject scores', err);
         }
       } catch (error) {
         hideConsoleLogInProduction("❌ Error fetching exams:", error);
@@ -94,7 +94,7 @@ const handleSubmitSubject = async (subject) => {
   if (!user_id) return alert("User not found!");
 
   const subjectExams = examsBySubject[subject];
-  console.log("Exam object:", subjectExams[0]);
+  hideConsoleLogInProduction("Exam object:", subjectExams[0]);
 
   if (!subjectExams || subjectExams.length === 0) {
     return alert("No questions for this subject.");
@@ -121,7 +121,7 @@ const handleSubmitSubject = async (subject) => {
     
     // Log answer details for debugging
     if (selectedOption) {
-      console.log(`Question ${index + 1} Answer:`, {
+      hideConsoleLogInProduction(`Question ${index + 1} Answer:`, {
         selected: selectedOption.text,
         correct: correctAnswer,
         isCorrect: selectedOption.text === correctAnswer
@@ -147,11 +147,11 @@ const handleSubmitSubject = async (subject) => {
       firstExam.subject ||
       null;
 
-    console.log("Detected subject_id:", subject_id);
+    hideConsoleLogInProduction("Detected subject_id:", subject_id);
 
     if (!subject_id) {
       alert("❌ Subject ID missing");
-      console.error("No subject_id found", firstExam);
+      hideConsoleLogInProduction("No subject_id found", firstExam);
       return;
     }
 
@@ -165,7 +165,7 @@ const handleSubmitSubject = async (subject) => {
       answers: subjectAnswers,
     });
 
-    console.log("✅ Submission response:", res);
+    hideConsoleLogInProduction("✅ Submission response:", res);
     alert(`✅ ${subject} submitted!\nScore: ${res.correct_answers}/${res.total_questions}`);
 
     // Refresh subject score after successful submission
@@ -184,11 +184,11 @@ const handleSubmitSubject = async (subject) => {
         if (data) setSubjectScores(prev => ({ ...prev, [subject]: data }));
       }
     } catch (e) {
-      console.warn('Failed to refresh subject score', e);
+      hideConsoleLogInProduction('Failed to refresh subject score', e);
     }
 
   } catch (error) {
-    console.error("❌ Submission error:", error);
+    hideConsoleLogInProduction("❌ Submission error:", error);
     alert(`❌ Failed to submit answers for ${subject}: ${error.message || "Server error"}`);
   } finally {
     setSubmitting(false);

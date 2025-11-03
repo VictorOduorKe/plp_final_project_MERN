@@ -36,11 +36,11 @@ const Exams = () => {
 
         setExamsBySubject(grouped);
         // fetch scores for each subject (use backend base and robust JSON handling)
-        const apiBase = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+        const apiBase = import.meta.env.VITE_API_URL;
         const fetchSubjectScore = async (sub, sid) => {
           try {
             const url = `${apiBase}/answers/score?user_id=${user_id}&subject_id=${encodeURIComponent(sid)}`;
-            const resp = await fetch(url, { cache: 'no-store' });
+            const resp = await fetch(url, { cache: 'no-store',withCredentials: true });
             // 304/204 responses may have no body — handle gracefully
             const contentType = resp.headers.get('content-type') || '';
             if (!resp.ok && resp.status !== 304 && resp.status !== 204) {
@@ -170,10 +170,10 @@ const handleSubmitSubject = async (subject) => {
 
     // Refresh subject score after successful submission
     try {
-      const apiBase = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+      const apiBase = import.meta.env.VITE_API_BASE_URL;
       const sid = subject_id;
       const url = `${apiBase}/answers/score?user_id=${user_id}&subject_id=${encodeURIComponent(sid)}`;
-      const resp = await fetch(url, { cache: 'no-store' });
+      const resp = await fetch(url, { cache: 'no-store',withCredentials: true });
       if (resp.ok) {
         const contentType = resp.headers.get('content-type') || '';
         let data = null;

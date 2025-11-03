@@ -170,7 +170,7 @@ const handleSubmitSubject = async (subject) => {
 
     // Refresh subject score after successful submission
     try {
-      const apiBase = import.meta.env.VITE_API_BASE_URL;
+      const apiBase = import.meta.env.VITE_API_URL;
       const sid = subject_id;
       const url = `${apiBase}/answers/score?user_id=${user_id}&subject_id=${encodeURIComponent(sid)}`;
       const resp = await fetch(url, { cache: 'no-store',withCredentials: true });

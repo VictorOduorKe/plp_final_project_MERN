@@ -1,4 +1,6 @@
 import axios from "axios"
+import { hideConsoleLogInProduction } from "./hideLogs";
+// import { hideConsoleLogInProduction } from "./hideLogs"; --- IGNORE ---
 
 export const fetchPlanBySubject = async (user_id, subject_id) => {
   try {
@@ -7,7 +9,7 @@ export const fetchPlanBySubject = async (user_id, subject_id) => {
     );
     return res.data;
   } catch (error) {
-    console.error("Error fetching plan by subject:", error);
+    hideConsoleLogInProduction("Error fetching plan by subject:", error);
     throw error;
   }
 };

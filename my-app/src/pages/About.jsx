@@ -16,7 +16,7 @@ const About = () => {
       {/* 📘 Mission & Vision */}
       <div className="grid md:grid-cols-2 gap-10 max-w-5xl mx-auto mt-10">
         <div className="bg-slate-800 p-8 rounded-2xl shadow-lg hover:shadow-violet-500/30 transition">
-          <h2 className="text-3xl font-bold text-violet-400 mb-4">🎯 Our Mission</h2>
+          <h2 className="text-3xl font-bold text-violet-400 mb-4"> Our Mission</h2>
           <p className="text-slate-300 leading-relaxed">
             To revolutionize how students approach learning by leveraging AI to simplify planning, 
             accelerate understanding, and improve academic performance.  
@@ -25,7 +25,7 @@ const About = () => {
         </div>
 
         <div className="bg-slate-800 p-8 rounded-2xl shadow-lg hover:shadow-violet-500/30 transition">
-          <h2 className="text-3xl font-bold text-violet-400 mb-4">🌍 Our Vision</h2>
+          <h2 className="text-3xl font-bold text-violet-400 mb-4"> Our Vision</h2>
           <p className="text-slate-300 leading-relaxed">
             A world where every student has a digital mentor — available 24/7 — to guide them 
             through their learning journey with custom-made plans, real-time feedback, and engaging content.

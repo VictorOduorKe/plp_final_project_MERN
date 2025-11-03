@@ -2,7 +2,8 @@ import { createContext, useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 export const AuthContext = createContext();
-
+import { hideConsoleLogInProduction } from "./hideLogs";
+// import { hideConsoleLogInProduction } from "./hideLogs"; --- IGNORE ---
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
@@ -41,7 +42,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.removeItem("user");
       toast.success("User logged out");
     } catch (err) {
-      console.error("Logout failed:", err);
+      hideConsoleLogInProduction("Logout failed:", err);
       toast.error("Failed to logout");
     }
   };

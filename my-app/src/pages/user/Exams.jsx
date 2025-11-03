@@ -8,6 +8,7 @@ const Exams = () => {
   const [examsBySubject, setExamsBySubject] = useState({});
   const [loading, setLoading] = useState(true);
   const [expandedSubject, setExpandedSubject] = useState(null);
+  const [subjectScores, setSubjectScores] = useState({});
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [submitting, setSubmitting] = useState(false);
 
@@ -34,6 +35,44 @@ const Exams = () => {
         }, {});
 
         setExamsBySubject(grouped);
+        // fetch scores for each subject (use backend base and robust JSON handling)
+        const apiBase = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+        const fetchSubjectScore = async (sub, sid) => {
+          try {
+            const url = `${apiBase}/answers/score?user_id=${user_id}&subject_id=${encodeURIComponent(sid)}`;
+            const resp = await fetch(url, { cache: 'no-store' });
+            // 304/204 responses may have no body — handle gracefully
+            const contentType = resp.headers.get('content-type') || '';
+            if (!resp.ok && resp.status !== 304 && resp.status !== 204) {
+              throw new Error(`Failed to fetch score (${resp.status})`);
+            }
+            if (resp.status === 204 || resp.status === 304) return null;
+            if (contentType.includes('application/json')) {
+              return await resp.json();
+            }
+            // fall back to text and try parse
+            const text = await resp.text();
+            try { return JSON.parse(text); } catch { return null; }
+          } catch (e) {
+            console.warn('Failed to fetch subject score', sub, e);
+            return null;
+          }
+        };
+
+        try {
+          const subjects = Object.keys(grouped);
+          const scores = {};
+          await Promise.all(subjects.map(async (sub) => {
+            const first = grouped[sub][0];
+            const sid = first?.subject_id || first?.subject?.id || first?.subject || null;
+            if (!sid) return;
+            const data = await fetchSubjectScore(sub, sid);
+            if (data) scores[sub] = data;
+          }));
+          setSubjectScores(scores);
+        } catch (err) {
+          console.warn('Failed to fetch subject scores', err);
+        }
       } catch (error) {
         hideConsoleLogInProduction("❌ Error fetching exams:", error);
       } finally {
@@ -55,42 +94,107 @@ const handleSubmitSubject = async (subject) => {
   if (!user_id) return alert("User not found!");
 
   const subjectExams = examsBySubject[subject];
+  console.log("Exam object:", subjectExams[0]);
+
   if (!subjectExams || subjectExams.length === 0) {
     return alert("No questions for this subject.");
+  }
+
+  // Check if any answers were selected
+  const answeredCount = Object.keys(selectedAnswers).filter(key => key.startsWith(subject)).length;
+  if (answeredCount === 0) {
+    return alert("Please answer at least one question before submitting.");
   }
 
   const subjectAnswers = subjectExams.map((exam, index) => {
     const examKey = `${subject}-${index}`;
     const selectedIndex = selectedAnswers[examKey];
-    const selectedOption = exam.options[selectedIndex];
+  const selectedOption = exam.options[selectedIndex];
+  const correctOption = exam.options.find((opt) => opt.is_correct || opt.correct);
+
+    if (!selectedOption) {
+      console.warn(`Missing answer for question ${index + 1}`);
+    }
+
+    // Get correct answer from the options
+    const correctAnswer = correctOption?.text || exam.correct_answer || "Not provided";
+    
+    // Log answer details for debugging
+    if (selectedOption) {
+      console.log(`Question ${index + 1} Answer:`, {
+        selected: selectedOption.text,
+        correct: correctAnswer,
+        isCorrect: selectedOption.text === correctAnswer
+      });
+    }
 
     return {
-      question_id: exam.id || `temp-${index}`,
+      question_id: exam._id || exam.id || `temp-${index}`,
       question_text: exam.question,
-      selected_option: selectedOption?.text || null,
-      correct_answer: exam.options.find((opt) => opt.is_correct)?.text,
+      selected_option: selectedOption?.text || "Not answered",
+      correct_answer: correctAnswer,
+      is_correct: selectedOption ? selectedOption.text === correctAnswer : false
     };
   });
 
   try {
     setSubmitting(true);
 
+    const firstExam = subjectExams[0];
+    const subject_id =
+      firstExam.subject_id ||
+      firstExam.subject?.id ||
+      firstExam.subject ||
+      null;
+
+    console.log("Detected subject_id:", subject_id);
+
+    if (!subject_id) {
+      alert("❌ Subject ID missing");
+      console.error("No subject_id found", firstExam);
+      return;
+    }
+
+    // Generate a practice exam ID if none exists
+    const practiceExamId = `practice-${subject_id}-${Date.now()}`;
+    
     const res = await submitAnswers({
       user_id,
-      subject_id: subjectExams[0].subject_id?.id || subjectExams[0].subject_id || null,
-      exam_id: subjectExams[0].id || null,
+      subject_id,
+      exam_id: practiceExamId,  // Use generated ID for practice exams
       answers: subjectAnswers,
     });
 
+    console.log("✅ Submission response:", res);
     alert(`✅ ${subject} submitted!\nScore: ${res.correct_answers}/${res.total_questions}`);
-    handleSelectOption(`📘 Submitted answers for ${subject}:`, res);
+
+    // Refresh subject score after successful submission
+    try {
+      const apiBase = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+      const sid = subject_id;
+      const url = `${apiBase}/answers/score?user_id=${user_id}&subject_id=${encodeURIComponent(sid)}`;
+      const resp = await fetch(url, { cache: 'no-store' });
+      if (resp.ok) {
+        const contentType = resp.headers.get('content-type') || '';
+        let data = null;
+        if (contentType.includes('application/json')) data = await resp.json();
+        else {
+          try { data = JSON.parse(await resp.text()); } catch { data = null; }
+        }
+        if (data) setSubjectScores(prev => ({ ...prev, [subject]: data }));
+      }
+    } catch (e) {
+      console.warn('Failed to refresh subject score', e);
+    }
+
   } catch (error) {
-    hideConsoleLogInProduction("❌ Submission error:", error);
+    console.error("❌ Submission error:", error);
     alert(`❌ Failed to submit answers for ${subject}: ${error.message || "Server error"}`);
   } finally {
     setSubmitting(false);
   }
 };
+
 
   if (loading) {
     return (
@@ -130,6 +234,11 @@ const handleSubmitSubject = async (subject) => {
               >
                 <h3 className="text-xl font-semibold text-blue-700">
                   📘 {subject}
+                   {subjectScores[subject] && (
+                    <div className="mb-2 text-sm text-white bg-green-600 p-1 rounded font-semibold">
+                      Previous score: {subjectScores[subject].correct_answers}/{subjectScores[subject].total_questions}
+                    </div>
+                  )}
                 </h3>
                 <span className="text-sm text-gray-600">
                   {expandedSubject === subject ? "▲ Hide" : "▼ View"}
@@ -139,6 +248,8 @@ const handleSubmitSubject = async (subject) => {
               {/* Collapsible Questions */}
               {expandedSubject === subject && (
                 <div className="p-5 space-y-4 bg-gray-50">
+                
+
                   {examsBySubject[subject].map((exam, index) => {
                     const examKey = `${subject}-${index}`;
                     return (
@@ -146,6 +257,8 @@ const handleSubmitSubject = async (subject) => {
                         key={examKey}
                         className="border border-gray-200 rounded-xl p-5 bg-white hover:bg-gray-50 transition"
                       >
+                       
+
                         <h4 className="font-semibold text-lg text-gray-800 mb-3">
                           {index + 1}. {exam.question}
                         </h4>

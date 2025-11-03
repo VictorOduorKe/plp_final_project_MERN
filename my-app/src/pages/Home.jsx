@@ -25,21 +25,21 @@ const Home = () => {
       {/* 🤖 AI Illustration or Feature Section */}
       <div className="mt-20 grid md:grid-cols-3 gap-8 max-w-5xl">
         <div className="p-6 bg-slate-800 rounded-2xl shadow-lg hover:shadow-violet-500/30 transition">
-          <h3 className="text-2xl font-bold mb-3 text-violet-400">📅 Smart Study Plans</h3>
+          <h3 className="text-2xl font-bold mb-3 text-violet-400">Smart Study Plans</h3>
           <p className="text-slate-300">
             Get tailored daily, weekly, or monthly study schedules based on your level, subjects, and available time.
           </p>
         </div>
 
         <div className="p-6 bg-slate-800 rounded-2xl shadow-lg hover:shadow-violet-500/30 transition">
-          <h3 className="text-2xl font-bold mb-3 text-violet-400">🧠 AI Short Notes</h3>
+          <h3 className="text-2xl font-bold mb-3 text-violet-400">AI Short Notes</h3>
           <p className="text-slate-300">
             Receive easy-to-understand summaries and key points for any topic, created by AI for fast revision.
           </p>
         </div>
 
         <div className="p-6 bg-slate-800 rounded-2xl shadow-lg hover:shadow-violet-500/30 transition">
-          <h3 className="text-2xl font-bold mb-3 text-violet-400">📊 Quizzes & Answers</h3>
+          <h3 className="text-2xl font-bold mb-3 text-violet-400"> Quizzes & Answers</h3>
           <p className="text-slate-300">
             Test your knowledge with automatically generated quizzes — complete with correct answers and explanations.
           </p>

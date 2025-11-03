@@ -1,6 +1,11 @@
 import axios from "axios";
+import { hideConsoleLogInProduction } from "./hideLogs";
 
 export const submitAnswers = async (answersData) => {
+  if(!answersData.subject_id ){
+    hideConsoleLogInProduction("❌ Subject ID is required.");
+    return { message: "Subject ID is required." };
+  }
   try {
     const response = await axios.post(
       `${import.meta.env.VITE_API_URL}/answers/submit`,
@@ -11,6 +16,7 @@ export const submitAnswers = async (answersData) => {
         answers: answersData.answers,
       }
     );
+    hideConsoleLogInProduction(answersData.subject_id);
     console.log("✅ Answers submitted:", response.data);
     return response.data;
   } catch (error) {

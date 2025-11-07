@@ -24,6 +24,10 @@ An interactive MERN stack application for generating and managing personalized s
 - **React Toastify** - Toast notifications
 - **Context API** - State management
 
+## PITCH DECK LINK
+[view the pitch deck](https://www.canva.com/design/DAG3ovkAhs8/n2Q-ftdXH5b8CbiqhO1umQ/edit?utm_content=DAG3ovkAhs8&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
+
+
 ## 📁 Project Structure
 
 ```

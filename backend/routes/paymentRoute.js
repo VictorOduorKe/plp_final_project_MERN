@@ -35,7 +35,7 @@ router.post("/", async (req, res) => {
       {
         email,
         amount: amount * 100, // Paystack uses kobo (1 NGN = 100 kobo)
-        callback_url: "http://localhost:5173/user/payment-success",
+        callback_url: "https://ai-study-planner-buddy.netlify.app/user/payment-success",
       },
       {
         headers: {

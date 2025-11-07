@@ -19,10 +19,9 @@ router.get("/admin/users", protect, authorizeRoles("admin"), async (req, res) =>
 // ✅ Admin: Delete a user
 router.delete("/admin/users/:id", protect, authorizeRoles("admin"), async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findByIdAndDelete(req.params.id);
+    console.log("Deleting user:", user);
     if (!user) return res.status(404).json({ message: "User not found" });
-
-    await user.remove();
     res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
     hideConsoleLogInProduction("Error deleting user:", error);

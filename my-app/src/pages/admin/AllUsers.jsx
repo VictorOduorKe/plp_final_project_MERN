@@ -1,10 +1,23 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import {toast} from "react-toastify";
 import { hideConsoleLogInProduction } from "../../context/hideLogs";
 const AllUsers = () => {
   const [users, setUsers] = useState([]);
   // cookie-based auth: server will validate via httpOnly cookie, no token required here
-
+ const handleDelete = async (userId) => {
+    try {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/admin/users/${userId}`, {
+        withCredentials: true,
+      });
+      setUsers(users.filter((user) => user._id !== userId));
+      toast.success("User deleted successfully");
+    } catch (err) {
+      toast.error("Failed to delete user");
+      console.error("Error deleting user: ", err.response?.data || err.message);
+      hideConsoleLogInProduction("Error deleting user: ", err.response?.data || err.message);
+    }
+  };
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -68,9 +81,9 @@ const AllUsers = () => {
                   <td className="px-6 py-4 whitespace-nowrap  text-violet-700">
                     {u.role === "admin" ? "never":u.plan || "3days remainig"}</td>
                     <td className="px-6 py-4 whitespace-nowrap  text-violet-700">
-                      <button className="p-2 bg-black border-r-8" data-id={u._id}>Block</button>
-                      <button className="p-2 bg-black border-r-4" data_-d={u._id}>View</button>
-                      <button className="p-2 bg-black border-r-4" data-id={u._id}>Delete </button>
+                      <button className="p-2 bg-red-900 text-white border-r-8" data-id={u._id}>Block</button>
+                      <button className="p-2 bg-gray-600 text-white border-r-4" data-id={u._id}>View</button>
+                      <button onClick={()=>handleDelete(u._id)} className="p-2 bg-red-600 text-red-50 font-bold border-r-4 rounded" data-id={u._id}>Delete </button>
                     </td>
                 </tr>
                 

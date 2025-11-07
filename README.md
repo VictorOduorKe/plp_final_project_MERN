@@ -76,7 +76,7 @@ for now eail otp is disabled
 
 # VISIST LIVE SITE HERE
 
-[Visit live site](https://ai-study-planner-buddy.netlify.app)
+[Visit live site](https://plp-final-project-mern.vercel.app)
 
 ## 🛠️ Setup Instructions
 

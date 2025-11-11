@@ -22,6 +22,8 @@ const Contact = () => {
         email,
         subject,
         message,
+      }, {
+        withCredentials: true
       });
 
       toast.success("Message sent successfully!");
@@ -42,7 +44,7 @@ const Contact = () => {
           Contact <span className="text-violet-400">Us</span>
         </h1>
         <p className="text-lg text-slate-300 mb-12 max-w-2xl mx-auto">
-          Have questions, feedback, or suggestions? We’d love to hear from you.  
+          Have questions, feedback, or suggestions? We’d love to hear from you.
           Reach out to the AI Study Planner team and we’ll respond as soon as possible.
         </p>
       </div>
@@ -106,15 +108,15 @@ const Contact = () => {
       <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-8 mt-20 text-center">
         <div className="bg-slate-800 p-6 rounded-2xl shadow-lg hover:shadow-violet-500/30 transition">
           <h3 className="text-2xl font-bold mb-3 text-violet-400">📍 Address</h3>
-          <p className="text-slate-300">123 AI Street, Nairobi, Kenya</p>
+          <p className="text-slate-300">123 AI Street, Mombasa, Kenya</p>
         </div>
         <div className="bg-slate-800 p-6 rounded-2xl shadow-lg hover:shadow-violet-500/30 transition">
           <h3 className="text-2xl font-bold mb-3 text-violet-400">📞 Phone</h3>
-          <p className="text-slate-300">+254 700 123 456</p>
+          <p className="text-slate-300">+254 102 638 973</p>
         </div>
         <div className="bg-slate-800 p-6 rounded-2xl shadow-lg hover:shadow-violet-500/30 transition">
           <h3 className="text-2xl font-bold mb-3 text-violet-400">📧 Email</h3>
-          <p className="text-slate-300">support@aistudyplanner.com</p>
+          <p className="text-slate-300">victoroduor723@gmail.com</p>
         </div>
       </div>
     </section>

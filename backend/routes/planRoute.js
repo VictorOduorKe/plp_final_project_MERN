@@ -355,7 +355,33 @@ Return ONLY valid JSON, no additional text or markdown.`;
     });
 
     let aiResponse;
-    try {
+    let retries=3;
+
+    for(let attempt=1; attempt<=retries; attempt++){
+      try {
+        aiResponse = await ai.models.generateContent({
+          model: "gemini-2.5-flash",
+          contents: prompt,
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 8000,
+          },
+        });
+       hideConsoleLogInProduction("✅ Gemini API call successful");
+       break; // Exit loop on success
+      } catch (aiError) {
+        hideConsoleLogInProduction(`❌ Gemini API Error on attempt ${attempt}:`, aiError);
+        if(attempt===retries){
+          return res.status(500).json({
+            error: "AI Service Error",
+            details: aiError.message
+          });
+        }
+        // Optionally add a delay before retrying
+        await new Promise(res => setTimeout(res, 1000 * attempt));
+      }
+    }
+   /* try {
       aiResponse = await ai.models.generateContent({
         model: "gemini-2.5-flash",
         contents: prompt,
@@ -366,12 +392,13 @@ Return ONLY valid JSON, no additional text or markdown.`;
       });
      hideConsoleLogInProduction("✅ Gemini API call successful");
     } catch (aiError) {
+      console.error("❌ Gemini API Error:", aiError);
       hideConsoleLogInProduction("❌ Gemini API Error:", aiError);
       return res.status(500).json({
         error: "AI Service Error",
         details: aiError.message
       });
-    }
+    }*/
 
     // 6️⃣ Process AI Response
     const planText = aiResponse.text.trim();

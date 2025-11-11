@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect} from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 
@@ -7,7 +7,7 @@ const Contact = () => {
   const [email, setEmail] = useState("");
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
-
+const [loading,setLoading]=useState(false);
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -15,6 +15,7 @@ const Contact = () => {
       toast.error("All fields are required");
       return;
     }
+       setLoading(true);
 
     try {
       await axios.post(`${import.meta.env.VITE_API_URL}/api/contact-message`, {
@@ -25,7 +26,6 @@ const Contact = () => {
       }, {
         withCredentials: true
       });
-
       toast.success("Message sent successfully!");
       setFullname("");
       setEmail("");
@@ -34,6 +34,9 @@ const Contact = () => {
     } catch (err) {
       console.error("Error sending message:", err);
       toast.error(err.response?.data?.message || "Failed to send message");
+      setLoading(false);
+    }finally{
+      setLoading(false);
     }
   };
 
@@ -98,9 +101,9 @@ const Contact = () => {
 
           <button
             type="submit"
+            disabled={loading}
             className="w-full py-3 bg-violet-500 hover:bg-violet-600 rounded-lg font-semibold text-lg transition duration-300"
-          >
-            Send Message
+          >{!loading ? "Send Messages" : "Sending..."}
           </button>
         </form>
       </div>
